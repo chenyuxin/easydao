@@ -1,0 +1,22 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+	<groupId>com.wondersgroup.common</groupId>
+	<artifactId>common-framework</artifactId>
+	<version>2.0G</version>
+	<relativePath>../pom.xml</relativePath>
+  </parent>
+	
+  <artifactId>common-base</artifactId>
+  <packaging>jar</packaging>
+
+  <name>common-base</name>
+  <url>http://maven.apache.org</url>
+  
+  <description>本框架的基本工具包,本框架中使用基本的工具都需要引用此包。</description>
+  
+  
+  
+</project>

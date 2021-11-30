@@ -1,0 +1,6 @@
+/.svn/
+/target/
+/.settings/
+/.classpath
+/.project
+common-base/.project.dtd
