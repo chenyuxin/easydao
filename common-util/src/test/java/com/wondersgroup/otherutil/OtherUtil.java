@@ -12,6 +12,7 @@ import com.wondersgroup.commonutil.CommonUtilUUID;
 import com.wondersgroup.commonutil.CommonUtilValidation;
 import com.wondersgroup.commonutil.type.language.JSONType;
 import com.wondersgroup.commonutil.type.language.XMLType;
+import com.wondersgroup.commonutil.type.ordinary.PrivacyType;
 
 public class OtherUtil {
 	
@@ -84,5 +85,27 @@ public class OtherUtil {
     	System.out.println(CommonUtilValidation.isUUID32("28c6284ed98841719a8d099ef69efdd0"));
     	System.out.println(CommonUtilValidation.isUUID32("系统.."));
     }
+    
+    @Test
+    public void isDate() {
+    	boolean iStrDate = CommonUtilValidation.isStrDate("2021/03/31 23:59:00");
+    	boolean iStrDate2 = CommonUtilValidation.isStrDate("2021-02-28 23:59:00");
+    	System.out.println(iStrDate);
+    	System.out.println(iStrDate2);
+    }
+    
+    @Test
+    public void isIdcard() {
+    	String regexString = PrivacyType.IdCard.getRegex();
+    	//boolean a="511102670411213".matches(regexString);
+    	boolean a="51110219670411213X".matches(regexString);
+		System.out.println(a);
+	}
+    
+    @Test
+    public void isBase64() {
+		boolean a = CommonUtilValidation.isBase64("MjM15Yqg55qE5ZKW5ZWh");
+		System.out.println(a);
+	}
 
 }

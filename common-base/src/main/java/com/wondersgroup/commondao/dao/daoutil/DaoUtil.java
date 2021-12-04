@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.rowset.serial.SerialClob;
 
+import com.wondersgroup.commonutil.constant.RegexConst;
+
 /**
  * Dao工具
  */
@@ -161,8 +163,7 @@ public class DaoUtil {
 	 * @return
 	 */
 	public static boolean isBase64(String str) {
-		String base64Pattern = "^([A-Za-z0-9+/]{4})*([A-Za-z0-9+/]{4}|[A-Za-z0-9+/]{3}=|[A-Za-z0-9+/]{2}==)$";
-		return str.matches(base64Pattern);
+		return str.matches(RegexConst.BASE64);
 	}
 	
 	

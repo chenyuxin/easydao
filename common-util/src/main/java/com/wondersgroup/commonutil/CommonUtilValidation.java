@@ -6,6 +6,7 @@ import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.constant.RegexConst;
 
 
 public class CommonUtilValidation {
@@ -14,8 +15,7 @@ public class CommonUtilValidation {
 	 * 判断是否为纯数字字母
 	 */
 	public static boolean isLetterDigit(String str) {
-		String regex = "^[a-z0-9A-Z]+$";
-		return str.matches(regex);
+		return str.matches(RegexConst.NUM_WORD);
 	}
 	
 	/**
@@ -24,8 +24,7 @@ public class CommonUtilValidation {
      * @return
      */
 	public static boolean isStrNum(String strNum) {
-        String regex = "[0-9]*";
-        return strNum.matches(regex);
+        return strNum.matches(RegexConst.NUMBERS);
     }
     
     /**
@@ -34,8 +33,7 @@ public class CommonUtilValidation {
      * @return
      */
     public static boolean isStrDate(String strDate) {
-    	String regex = "^((\\d{2}(([02468][048])|([13579][26]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])))))|(\\d{2}(([02468][1235679])|([13579][01345789]))[\\-\\/\\s]?((((0?[13578])|(1[02]))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(3[01])))|(((0?[469])|(11))[\\-\\/\\s]?((0?[1-9])|([1-2][0-9])|(30)))|(0?2[\\-\\/\\s]?((0?[1-9])|(1[0-9])|(2[0-8]))))))(\\s(((0?[0-9])|([1-2][0-3]))\\:([0-5]?[0-9])((\\s)|(\\:([0-5]?[0-9])))))?$";
-    	return strDate.matches(regex);
+    	return strDate.matches(RegexConst.DATE);
     }
     
     /**
@@ -45,8 +43,7 @@ public class CommonUtilValidation {
      * @return
      */
     public static boolean isEmail(String strEmail) {
-        String regex = "\\w+([-+.]\\w+)*@\\w+([-.]\\w+)*\\.\\w+([-.]\\w+)*" ;
-        return strEmail.matches(regex);
+        return strEmail.matches(RegexConst.EMAIL);
     }
     
     /**
@@ -56,8 +53,7 @@ public class CommonUtilValidation {
      * @return
      */
     public static boolean isQQ(String strQQ) {
-        String regex = "[1-9][0-9]{4,14}" ;
-        return strQQ.matches(regex);
+        return strQQ.matches(RegexConst.QQ);
     }
     
     /**
@@ -68,14 +64,12 @@ public class CommonUtilValidation {
      * @return
      */
     public static boolean isPhoneNum(int checkType, String strPhoneNum) {
-    	String phoneRegex = "^(((13[0-9]{1})|(15[0-9]{1})|(14[0-9]{1})|(18[0-9]{1})|(17[0-9]{1}))+\\d{8})?$" ;
-    	String telRegex = "^(0[0-9]{2,3}\\-)?([1-9][0-9]{6,7})$";
     	if (0 == checkType) {
-    		return strPhoneNum.matches(phoneRegex);
+    		return strPhoneNum.matches(RegexConst.PHONE);
     	} else if (1 == checkType) {
-    		return strPhoneNum.matches(telRegex);
+    		return strPhoneNum.matches(RegexConst.TEL);
     	} else if (2 == checkType) {
-    		return strPhoneNum.matches(phoneRegex) || strPhoneNum.matches(telRegex);
+    		return strPhoneNum.matches(RegexConst.PHONE) || strPhoneNum.matches(RegexConst.TEL);
     	}
     	return false;
     }
@@ -201,16 +195,12 @@ public class CommonUtilValidation {
 	}
 	
 	/**
-	 * ipv4正则匹配
-	 */
-	public static String ipRegex = "((25[0-5]|2[0-4]\\d|[01]?\\d\\d?)\\.){3}(25[0-5]|2[0-4]\\d|[01]?\\d\\d?)";
-	/**
 	 * 是否为ip地址
 	 * @param strIp
 	 * @return
 	 */
 	public static boolean isIP(String strIp) {
-		return strIp.matches(ipRegex);
+		return strIp.matches(RegexConst.IPV4);
 	}
 	/**
 	 * 是否包含ip地址
@@ -218,20 +208,16 @@ public class CommonUtilValidation {
 	 * @return
 	 */
 	public static boolean constantIp(String str) {
-		String regex = ".*?".concat(ipRegex).concat(".*?");
+		String regex = ".*?".concat(RegexConst.IPV4).concat(".*?");
 		return str.matches(regex);
 	}
 	
-	/**
-	 * 32位uuid正则匹配
-	 */
-	public static String uuidRegex = "[0-9a-fA-F]{32}";
 	
 	/**
 	 * 是否为32位uuid
 	 */
 	public static boolean isUUID32(String uuidString) {
-		return uuidString.matches(uuidRegex);
+		return uuidString.matches(RegexConst.UUID32);
 	}
 	
 }
