@@ -24,7 +24,7 @@ public class Snippet {
 	        System.out.println("isIp:" + CommonUtilValidation.isIP("123.345.345.643"));
 	        System.out.println("isIp:" + CommonUtilValidation.isIP("254.253.252.3"));
 	    	System.out.println(CommonUtilValidation.constantIp("成绩都是快乐的IP： 254.192.254.3成绩都是快乐的发动机老师肯定就"));
-	    	String tString = TransformPrivacy.constantTransform("成绩都是快乐的IP:154.253.254.3成绩都是快乐的发动机老师肯定就", CommonUtilValidation.ipRegex, PrivacyType.IPv4);
+	    	String tString = TransformPrivacy.constantTransform("成绩都是快乐的IP:154.253.254.3成绩都是快乐的发动机老师肯定就", PrivacyType.IPv4);
 	    	System.out.println(tString);
 	    	
 	    }

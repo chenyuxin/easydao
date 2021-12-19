@@ -5,11 +5,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wondersgroup.commonutil.constant.RegexConst;
 import com.wondersgroup.commonutil.type.CommonType;
 
 /**
  * 隐私类型 用于内容脱敏转换
- * 枚举顺序固定不要改变 1中文姓名 2身份证 3固定电话 4手机号码 5地址 6电子邮箱 7银行卡号
+ * 枚举顺序固定不要改变 1中文姓名 2身份证 3固定电话 4手机号码 5地址 6电子邮箱 7银行卡号 8 IPv4
  */
 public enum PrivacyType implements CommonType {
 
@@ -24,6 +25,11 @@ public enum PrivacyType implements CommonType {
 
 		@Override
 		public String getDisplayName() {
+			return "";
+		}
+
+		@Override
+		public String getRegex() {
 			return "";
 		}
 	},
@@ -47,6 +53,11 @@ public enum PrivacyType implements CommonType {
 		public String getDisplayName() {
 			return "中文姓名";
 		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.CHINESE;
+		}
 	},
 	/**
 	 * 脱敏身份证号
@@ -57,12 +68,17 @@ public enum PrivacyType implements CommonType {
 			if (null == idCard || "".equals(idCard)) {
 				return idCard;
 			}
-			return "*************".concat(idCard.substring(14));
+			return idCard.substring(0, 1).concat("*************").concat(idCard.substring(14));
 		}
 
 		@Override
 		public String getDisplayName() {
 			return "身份证";
+		}
+
+		@Override
+		public String getRegex() {
+			return "(".concat(RegexConst.IDCARD18).concat(")|(").concat(RegexConst.IDCARD15).concat(")");
 		}
 	},
 	/**
@@ -81,6 +97,11 @@ public enum PrivacyType implements CommonType {
 		public String getDisplayName() {
 			return "固定电话";
 		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.TEL;
+		}
 	},
 	/**
 	 * 脱敏手机号码
@@ -97,6 +118,11 @@ public enum PrivacyType implements CommonType {
 		@Override
 		public String getDisplayName() {
 			return "手机号码";
+		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.PHONE;
 		}
 	},
 	/**
@@ -118,6 +144,11 @@ public enum PrivacyType implements CommonType {
 		@Override
 		public String getDisplayName() {
 			return "地址";
+		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.ADDRESS;
 		}
 	},
 	/**
@@ -141,6 +172,11 @@ public enum PrivacyType implements CommonType {
 		public String getDisplayName() {
 			return "电子邮箱";
 		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.EMAIL;
+		}
 	},
 	/**
 	 * 脱敏银行卡号
@@ -163,6 +199,11 @@ public enum PrivacyType implements CommonType {
 		public String getDisplayName() {
 			return "银行卡号";
 		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.BANKCARDNUM;
+		}
 	},
 	
 	IPv4 {
@@ -181,6 +222,11 @@ public enum PrivacyType implements CommonType {
 		@Override
 		public String getDisplayName() {
 			return "IPv4地址";
+		}
+
+		@Override
+		public String getRegex() {
+			return RegexConst.IPV4;
 		}
 	}
 	
@@ -214,6 +260,13 @@ public enum PrivacyType implements CommonType {
 	 * @return
 	 */
 	public abstract String getDisplayName();
+	
+	/**
+	 * 获取验证的正则<br>
+	 * 某些正则并非强验证，请测试
+	 * @return
+	 */
+	public abstract String getRegex();
 	
 	/**
 	 * 获取所有隐私类型 的List

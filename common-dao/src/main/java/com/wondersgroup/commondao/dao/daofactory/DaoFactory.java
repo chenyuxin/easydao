@@ -1,12 +1,10 @@
 package com.wondersgroup.commondao.dao.daofactory;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedList;
 import java.util.Map;
-import java.util.UUID;
 import java.util.Map.Entry;
 
 import javax.annotation.Resource;
@@ -24,6 +22,7 @@ import com.alibaba.druid.pool.DruidDataSource;
 import com.wondersgroup.commondao.dao.daoutil.DaoConfResource;
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
 import com.wondersgroup.commondao.dao.daoutil.toolentity.QureyData4Cache;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.type.CommonTypeCaches;
 import com.wondersgroup.commonutil.type.database.DataBaseType;
 import com.wondersgroup.commonutil.type.database.TableType;
@@ -131,9 +130,8 @@ public class DaoFactory implements InitializingBean {
 	 * @param paramMap
 	 * @param dataSrouceName
 	 * @return
-	 * @throws UnsupportedEncodingException
 	 */
-	public String getQueryKey(String sql,Map<String,Object> paramMap,String dataSrouceName) throws UnsupportedEncodingException {
+	public String getQueryKey(String sql,Map<String,Object> paramMap,String dataSrouceName) {
 		StringBuffer sBuffer = new StringBuffer(sql);
 		if (null != paramMap ) {
 			if (!paramMap.isEmpty()) {
@@ -143,7 +141,7 @@ public class DaoFactory implements InitializingBean {
 		if (null != dataSrouceName && !"".equals(dataSrouceName) ) {
 			sBuffer.append(dataSrouceName);
 		}
-		return UUID.nameUUIDFromBytes(sBuffer.toString().getBytes("utf-8")).toString().replace("-","");//根据字符串生成固定id
+		return BaseUtil.getUUIDC(sBuffer.toString());
 	}
 	
 	/**
@@ -187,19 +185,10 @@ public class DaoFactory implements InitializingBean {
 			return null;//不开启查询结果缓存
 		}
 		checkQureyDataCacheMap();//缓存map查看有无超时，移除超时缓存map
-		String key = "";
-		try {
-			key = getQueryKey(sql,paramMap,dataSourceName);
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		String key = getQueryKey(sql,paramMap,dataSourceName);
 		QureyData4Cache<?> QureyData4Cache = QureyDataCacheMap.get(key);
 		if (null != QureyData4Cache ) {
-			try {
-				return QureyData4Cache.getQureyData();
-			} catch (Exception e) {
-				return null;
-			}
+			return QureyData4Cache.getQureyData();
 		} 
 		return null;
 	}

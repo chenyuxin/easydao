@@ -45,7 +45,18 @@ public class CommonUtilString {
         }
     }
     
-    
+    /**
+     * 去掉所有空格和制表符
+     * @param str
+     * @return
+     */
+    public static String trimAll(String str) {
+    	if (str == null || str.equals("")) {
+            return str;
+        } else {
+        	return str.replaceAll("\\s*", "");
+        }
+	}
     
 
     

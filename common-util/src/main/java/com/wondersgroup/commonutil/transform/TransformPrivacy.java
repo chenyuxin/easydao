@@ -37,8 +37,8 @@ public class TransformPrivacy {
      * @param privacyType 隐私类型（脱敏类型）
      * @return
      */
-    public static String constantTransform(String str,String regex,PrivacyType privacyType) {
-    	Pattern pattern = Pattern.compile(regex,Pattern.CASE_INSENSITIVE);
+    public static String constantTransform(String str,PrivacyType privacyType) {
+    	Pattern pattern = Pattern.compile(privacyType.getRegex(),Pattern.CASE_INSENSITIVE);
         StringBuffer sb = new StringBuffer();
         Matcher m = pattern.matcher(str);
         while (m.find()) {

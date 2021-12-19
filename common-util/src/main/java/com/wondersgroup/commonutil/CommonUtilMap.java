@@ -14,14 +14,15 @@ public class CommonUtilMap {
 	
 	/**
 	 * 获取map里的value
-	 * @param <T>
+	 * @param <T> 
+	 * @param <K>
 	 * @param clazz 取值类型
 	 * @param key 获取值的key
 	 * @param map 获取值的map
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getValueOfMap(@Nonnull Class<T> clazz, String key, Map<String, Object> map ) {
+	public static <T, K> T getValueOfMap(@Nonnull Class<T> clazz, K key, Map<K, ?> map ) {
 		Object value =  map.get(key);
 		if (null == value) {
 			return null;
@@ -39,13 +40,14 @@ public class CommonUtilMap {
 	/**
 	 * 获取map里的value,为null时或获取时异常则默认一个值
 	 * @param <T>
+	 * @param <K>
 	 * @param defaultResult 不能取正常的值时默认一个值
 	 * @param key 获取值的key
 	 * @param map 获取值的map
 	 * @return
 	 */
 	@SuppressWarnings("unchecked")
-	public static <T> T getValueOfMap(@Nonnull T defaultResult, String key, Map<String, Object> map) {
+	public static <T, K> T getValueOfMap(@Nonnull T defaultResult, K key, Map<K, ?> map) {
 		try {
 			Object value =  map.get(key);
 			if (null == value) {
