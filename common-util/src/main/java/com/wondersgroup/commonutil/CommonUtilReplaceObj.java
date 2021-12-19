@@ -4,6 +4,7 @@ import java.lang.reflect.Field;
 import java.util.Map;
 
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 
 
 /**
@@ -271,7 +272,7 @@ public class CommonUtilReplaceObj {
 	 * @return
 	 */
 	public static String setNullString(String string, String isNotNullString) {
-		return DaoUtil.setNullString(string, isNotNullString);
+		return BaseUtil.setNullString(string, isNotNullString);
 	}
 	
 	/**
@@ -282,7 +283,7 @@ public class CommonUtilReplaceObj {
 	 * @return
 	 */
 	public static <T> T setNull(T obj,T isNotNullValue) {
-		return DaoUtil.setNull(obj,isNotNullValue);
+		return BaseUtil.setNull(obj,isNotNullValue);
 	}
 	
 }

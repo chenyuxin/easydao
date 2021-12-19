@@ -1,12 +1,11 @@
 package com.wondersgroup.commondao.dao.daoutil.toolentity;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.Map;
-import java.util.UUID;
 
 import com.wondersgroup.commondao.dao.daoutil.SqlReader;
 import com.wondersgroup.commonutil.MyObj;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 
 /**
  * 查询缓存对象
@@ -61,20 +60,15 @@ public class QureyData4Cache<T> {
 		this.paramMap = paramMap;
 		this.dataSourceName = dataSourceName;
 		this.qureyTime = new Date().getTime();
-		try {
-			this.key = getQueryKey();
-		} catch (UnsupportedEncodingException e) {
-			e.printStackTrace();
-		}
+		this.key = getQueryKey();
 		this.tableNames = SqlReader.getTablesFromSql(sql);
 	}
 
 	/**
 	 * 获取查询结果缓存key
 	 * @return
-	 * @throws UnsupportedEncodingException
 	 */
-	public String getQueryKey() throws UnsupportedEncodingException {
+	public String getQueryKey() {
 		StringBuffer sBuffer = new StringBuffer(this.sql);
 		if ( null != this.paramMap ) {
 			if ( !this.paramMap.isEmpty() ){
@@ -84,7 +78,7 @@ public class QureyData4Cache<T> {
 		if (null != this.dataSourceName && !"".equals(this.dataSourceName) ) {
 			sBuffer.append(this.dataSourceName);
 		}
-		return UUID.nameUUIDFromBytes(sBuffer.toString().getBytes("utf-8")).toString().replace("-","");//根据字符串生成固定id
+		return BaseUtil.getUUIDC(sBuffer.toString());//根据字符串生成固定id
 	}
 	
 	/**

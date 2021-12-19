@@ -19,6 +19,10 @@ public class OtherUtil {
 	@Test
 	public void testUUID(){
 		System.out.println(CommonUtilUUID.getUUID());
+		long start = System.currentTimeMillis();
+		System.out.println(CommonUtilUUID.getUUIDC("中国@Ab123"));
+		System.out.print("getUUIDC用时(毫秒ms):");
+		System.out.println(System.currentTimeMillis()-start);
 		
 	}
 

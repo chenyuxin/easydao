@@ -7,6 +7,7 @@ import java.util.Map;
 
 import com.wondersgroup.commondao.dao.custom.QueryCondition;
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.type.database.TableType;
 
 /**
@@ -63,7 +64,7 @@ public class DaoOptions {
 	 * @param queryConditions 自定义通用查询条件
 	 */
 	private void init(String dataSourceName, Map<String, Object> paramMap, QueryCondition... queryConditions){
-		this.dataSourceName = DaoUtil.setNullString(dataSourceName,DaoUtil.defaultDataSourceName);
+		this.dataSourceName = BaseUtil.setNullString(dataSourceName,DaoUtil.defaultDataSourceName);
 		this.paramMap = paramMap;
 		this.queryConditions = queryConditions;
 	}

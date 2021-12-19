@@ -11,8 +11,6 @@ import java.util.regex.Pattern;
 
 import javax.sql.rowset.serial.SerialClob;
 
-import com.wondersgroup.commonutil.constant.RegexConst;
-
 /**
  * Dao工具
  */
@@ -123,49 +121,6 @@ public class DaoUtil {
 			}
 		}
 	}
-	
-	/**
-	 * 替换字符串的空值为指定值
-	 * @param string 待判断的字符串
-	 * @param isNotNullString 替换空值的默认字符串
-	 * @return
-	 * @throws Exception
-	 */
-	public static String setNullString(String string, String isNotNullString) {
-		if (null == string || "".equals(string) ) {
-			string = isNotNullString;
-		}
-		return string;
-	}
-	
-	/**
-	 * 替换某类型的空值为指定值
-	 * @param <T>
-	 * @param obj 待判断的值
-	 * @param isNotNullValue 替换空值的默认值
-	 * @return
-	 */
-	@SuppressWarnings("unchecked")
-	public static <T> T setNull(T obj,T isNotNullValue) {
-		if (null == obj) {
-			obj = isNotNullValue;
-		} else if (obj.getClass().equals(String.class) ) {
-			if ("".equals(obj) ) {
-				obj = (T) String.valueOf(isNotNullValue);
-			}
-		}
-		return obj;
-	}
-	
-	/**
-	 * 是否为Base64字符串
-	 * @param str
-	 * @return
-	 */
-	public static boolean isBase64(String str) {
-		return str.matches(RegexConst.BASE64);
-	}
-	
 	
 	/**
      * Clob 转 String

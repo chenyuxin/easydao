@@ -5,7 +5,7 @@ import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Hashtable;
 
-import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.constant.RegexConst;
 
 
@@ -191,7 +191,7 @@ public class CommonUtilValidation {
 	 * @return
 	 */
 	public static boolean isBase64(String str) {
-		return DaoUtil.isBase64(str);
+		return BaseUtil.isBase64(str);
 	}
 	
 	/**

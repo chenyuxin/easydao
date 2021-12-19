@@ -68,7 +68,7 @@ public enum PrivacyType implements CommonType {
 			if (null == idCard || "".equals(idCard)) {
 				return idCard;
 			}
-			return idCard.substring(0, 1).concat("*************").concat(idCard.substring(15));
+			return idCard.substring(0, 1).concat("*************").concat(idCard.substring(14));
 		}
 
 		@Override

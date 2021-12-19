@@ -9,7 +9,7 @@ import java.util.Map;
 
 import org.springframework.util.Base64Utils;
 
-import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.type.CommonType;
 import com.wondersgroup.commonutil.type.format.DateType;
 import com.wondersgroup.commonutil.type.otherintf.TypeParse;
@@ -398,7 +398,7 @@ public enum FieldType implements CommonType,TypeParse {
 			} else {
 				if (value instanceof String) {
 					String str = String.valueOf(value);
-					if (DaoUtil.isBase64(str)) {
+					if (BaseUtil.isBase64(str)) {
 						//传输过来的byte[]转json时默认转为 Base64的字符串,
 						return Base64Utils.decodeFromString(str);
 					} else {

@@ -144,6 +144,4 @@ public class StringPool {
 
 	public static final String UTC = "UTC";
 
-	public static final String UTF8 = "UTF-8";
-
 }
