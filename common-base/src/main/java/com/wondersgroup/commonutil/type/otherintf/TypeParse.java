@@ -6,6 +6,11 @@ package com.wondersgroup.commonutil.type.otherintf;
  */
 public interface TypeParse<T> {
 	
+	/**
+	 * 解析为对应的类型
+	 * @param value
+	 * @return
+	 */
 	T parse(Object value);
 
 }

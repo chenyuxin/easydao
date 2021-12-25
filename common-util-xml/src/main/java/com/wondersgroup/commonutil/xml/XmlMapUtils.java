@@ -1,5 +1,6 @@
 package com.wondersgroup.commonutil.xml;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,40 +21,37 @@ public class XmlMapUtils {
      *
      * @param xml xml字符串
      * @return 第一个为Root节点，Root节点之后为Root的元素，如果为多层，可以通过key获取下一层Map
+	 * @throws DocumentException 
      */
-    public static Map<String, Object> xmlToMap(String xml) {
+    public static Map<String, Object> xmlToMap(String xml) throws DocumentException {
         Document doc = null;
         List<String> moreRootElementXML = null;
         Map<String, Object> map = new HashMap<String, Object>();
         Set<String> currentElementName = new HashSet<String>();//当前元素标签名集合，判断是否有重复的标签
-        try {
-        	xml = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
-        	moreRootElementXML = XmlUtils.moreRootElementXML(xml);
-            for (String xmlA : moreRootElementXML) {
-	        	doc = DocumentHelper.parseText(xmlA);
-	            if (null == doc) {
-	                continue;
-	            }
-	            // 获取根元素
-	            Element rootElement = doc.getRootElement();
-	            if ( currentElementName.contains(rootElement.getName()) ) {//有相同名称的节点转为List
-	            	Object obj = map.get(rootElement.getName());
-	            	if (obj instanceof List) {//存在List说明之前已有重复节点，现在已经转为List
-	            		recursionXml(rootElement,obj);//往list里面继续递归
-	            	} else {//不存在List，是刚发现的重复，把节点转成list放入
-	            		List<Object> list = new ArrayList<Object>();
-	            		list.add(obj);
-	            		recursionXml(rootElement,list);//往list里面继续递归
-	            		map.put(rootElement.getName(),list);//节点放入成List
-	            	}
-	            } else {
-	            	recursionXml(rootElement,map);
-	            }
-	            currentElementName.add(rootElement.getName());
+    	//xml = xml.replace("<?xml version=\"1.0\" encoding=\"UTF-8\"?>", "");
+    	xml = xml.replaceAll(XmlUtils.xmlHeadRegex, "");//去除xml声明头部
+    	moreRootElementXML = XmlUtils.moreRootElementXML(xml);
+        for (String xmlA : moreRootElementXML) {
+        	doc = DocumentHelper.parseText(xmlA);
+            if (null == doc) {
+                continue;
             }
-        } catch (DocumentException e) {
-            //logger.error("xml字符串解析，失败 --> {}", e);
-        	e.printStackTrace();
+            // 获取根元素
+            Element rootElement = doc.getRootElement();
+            if ( currentElementName.contains(rootElement.getName()) ) {//有相同名称的节点转为List
+            	Object obj = map.get(rootElement.getName());
+            	if (obj instanceof List) {//存在List说明之前已有重复节点，现在已经转为List
+            		recursionXml(rootElement,obj);//往list里面继续递归
+            	} else {//不存在List，是刚发现的重复，把节点转成list放入
+            		List<Object> list = new ArrayList<Object>();
+            		list.add(obj);
+            		recursionXml(rootElement,list);//往list里面继续递归
+            		map.put(rootElement.getName(),list);//节点放入成List
+            	}
+            } else {
+            	recursionXml(rootElement,map);
+            }
+            currentElementName.add(rootElement.getName());
         }
         return map;
     }
@@ -120,8 +118,10 @@ public class XmlMapUtils {
      *
      * @param map 需要转换为xml的map
      * @return xml字符串
+     * @throws IOException 
+     * @throws DocumentException 
      */
-    public static String mapToXml(Map<String, Object> map){
+    public static String mapToXml(Map<String, Object> map) throws DocumentException, IOException{
         Document doc = DocumentHelper.createDocument();
         doc.addElement("root");
         String xml = recursionToXml(doc.getRootElement(), map);

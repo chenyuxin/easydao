@@ -16,6 +16,12 @@ import org.dom4j.io.XMLWriter;
 public class XmlUtils {
 	
 	/**
+	 * 正则匹配xml的声明头部
+	 */
+	public static final String xmlHeadRegex = "(<\\?xml).*?(\\?>)";
+	//public static final String xmlHeadRegex = "<\\?xml\s+version=('|\").*?('|\")\s+(?:encoding=('|\").*?('|\"))?\\?>";
+	
+	/**
 	 * 支持无root节点的xml,转为多个xml解析
 	 * @param xml
 	 * @return
@@ -45,7 +51,7 @@ public class XmlUtils {
 	 * @throws DocumentException 
 	 * @throws IOException 
      */
-    public static String formatXML(String xml){
+    public static String formatXML(String xml) throws DocumentException, IOException{
     	StringBuffer requestXML = new StringBuffer();
     	
     	// 拿取解析器
@@ -61,22 +67,18 @@ public class XmlUtils {
     	// 是否分行
     	format.setNewlines(true);
     	
-    	try {
-	    	List<String> moreRootElementXML = moreRootElementXML(xml);
-	    	for (String moreXml : moreRootElementXML) {
-	            Document document = reader.read(new StringReader(moreXml));
-	            if (null != document) {
-	                StringWriter stringWriter = new StringWriter();
-	                XMLWriter writer = new XMLWriter(stringWriter, format);
-	                writer.write(document.getRootElement());//getRootElement去掉xml头<?xml version="1.0" encoding="UTF-8"?>   
-	                writer.flush();
-	                writer.close();
-	                requestXML.append(stringWriter.getBuffer().toString());
-	            }
-	    	}
-    	} catch (Exception e) {
-			e.printStackTrace();
-		}	
+    	List<String> moreRootElementXML = moreRootElementXML(xml);
+    	for (String moreXml : moreRootElementXML) {
+            Document document = reader.read(new StringReader(moreXml));
+            if (null != document) {
+                StringWriter stringWriter = new StringWriter();
+                XMLWriter writer = new XMLWriter(stringWriter, format);
+                writer.write(document.getRootElement());//getRootElement去掉xml头<?xml version="1.0" encoding="UTF-8"?>   
+                writer.flush();
+                writer.close();
+                requestXML.append(stringWriter.getBuffer().toString());
+            }
+    	}
     	return requestXML.toString();
     	
     }
