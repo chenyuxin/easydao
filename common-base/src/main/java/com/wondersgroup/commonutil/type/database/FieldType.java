@@ -57,6 +57,7 @@ public enum FieldType implements CommonType,TypeParse {
 		public Class getJavaClass() {
 			return String.class;
 		}
+		
 	},
 	
 	/**
@@ -85,7 +86,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Integer parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = -1;//替换null值
 				return null;
 			} else {
@@ -130,7 +131,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Float parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = 0.0;
 				return null;
 			} else {
@@ -174,14 +175,14 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Date parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = DateType.getInstance().getParseValue("1900-01-01");//替换null值
 				return null;
 			} else {
-				if (!(value instanceof Date)) {
-					return DateType.getInstance().getParseValue(String.valueOf(value));
-				} else {
+				if (value instanceof Date) {
 					return (Date) value;
+				} else {
+					return DateType.getInstance().getParseValue(String.valueOf(value));
 				}
 			}
 		}
@@ -220,7 +221,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Long parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = -1L;
 				return null;
 			} else {
@@ -264,7 +265,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Double parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = 0.0;
 				return null;
 			} else {
@@ -392,7 +393,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public byte[] parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = [];
 				return null;
 			} else {
@@ -439,7 +440,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public BigDecimal parse(Object value) {
-			if (value == null) {
+			if ( null == value || "".equals(value) ) {
 				//value = 0;
 				return null;
 			} else {

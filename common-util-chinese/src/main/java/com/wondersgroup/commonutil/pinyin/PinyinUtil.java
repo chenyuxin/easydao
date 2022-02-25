@@ -13,23 +13,20 @@ import net.sourceforge.pinyin4j.format.exception.BadHanyuPinyinOutputFormatCombi
  */
 public class PinyinUtil {
 	
+	
+	private static final HanyuPinyinOutputFormat format = new HanyuPinyinOutputFormat();
+	
+	private static final HanyuPinyinOutputFormat defaultFormat = new HanyuPinyinOutputFormat();
+	
 	static {
-		HanyuPinyinOutputFormat formatT = new HanyuPinyinOutputFormat();
-		formatT.setCaseType(HanyuPinyinCaseType.LOWERCASE);
-        formatT.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
-        formatT.setVCharType(HanyuPinyinVCharType.WITH_V);
-        format = formatT;
+		format.setCaseType(HanyuPinyinCaseType.LOWERCASE);
+		format.setToneType(HanyuPinyinToneType.WITHOUT_TONE);
+		format.setVCharType(HanyuPinyinVCharType.WITH_V);
 		
-        HanyuPinyinOutputFormat defaultFormatT = new HanyuPinyinOutputFormat();
-        defaultFormatT.setCaseType(HanyuPinyinCaseType.UPPERCASE);
-        defaultFormatT.setToneType(HanyuPinyinToneType.WITH_TONE_NUMBER);
-        defaultFormatT.setVCharType(HanyuPinyinVCharType.WITH_V);
-        defaultFormat = defaultFormatT;
+        defaultFormat.setCaseType(HanyuPinyinCaseType.UPPERCASE);
+        defaultFormat.setToneType(HanyuPinyinToneType.WITH_TONE_NUMBER);
+        defaultFormat.setVCharType(HanyuPinyinVCharType.WITH_V);
 	}
-	
-	private static final HanyuPinyinOutputFormat format;
-	
-	private static final HanyuPinyinOutputFormat defaultFormat;
 	
 	
 	/**

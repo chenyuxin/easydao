@@ -78,7 +78,7 @@ public enum PrivacyType implements CommonType {
 
 		@Override
 		public String getRegex() {
-			return "(".concat(RegexConst.IDCARD18).concat(")|(").concat(RegexConst.IDCARD15).concat(")");
+			return RegexConst.IDCARD;
 		}
 	},
 	/**

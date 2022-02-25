@@ -50,6 +50,9 @@ public class DateType implements FormatType {
 	 * 只在本次转换格式
 	 */
 	public String getFomatValue(Object oValue,String pattern) {
+		if (null == oValue) {
+			return null;
+		}
 		SimpleDateFormat sdf = new SimpleDateFormat(pattern);
 		return sdf.format(oValue);
 	}
@@ -62,7 +65,7 @@ public class DateType implements FormatType {
         
         SimpleDateFormat parser = new SimpleDateFormat();
         final ParsePosition pos = new ParsePosition(0);
-        final String[] parsePatterns = {DEFAULT_FORMAT_TYPE,"yyyy-MM-dd"};//默认转换日期格式
+        final String[] parsePatterns = {DEFAULT_FORMAT_TYPE,"yyyy-MM-dd","yyyyMMdd"};//默认转换日期格式
         
         for (final String parsePattern : parsePatterns) {
 
