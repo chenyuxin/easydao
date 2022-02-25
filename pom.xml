@@ -1,5 +1,6 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8"?>
+<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
   <modelVersion>4.0.0</modelVersion>
 
   <groupId>com.wondersgroup.common</groupId>
@@ -30,17 +31,17 @@
   	<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 	<java.version>1.8</java.version>
 	
-	<spring.version>5.3.14</spring.version>
+	<spring.version>5.3.16</spring.version>
 	
 	<asm.version>9.2</asm.version>
-	<aspectjrt.version>1.9.7</aspectjrt.version>
+	<aspectjrt.version>1.9.8</aspectjrt.version>
 	<classmate.version>1.5.1</classmate.version>
 	<commons-fileupload.version>1.4</commons-fileupload.version>
 	<commons-io.version>2.11.0</commons-io.version>
 	<commons-lang3.version>3.12.0</commons-lang3.version>
-	<slf4j.version>1.7.32</slf4j.version>
-	<log4j.version>2.17.0</log4j.version>
-	<fastjson.version>1.2.78</fastjson.version>
+	<slf4j.version>1.7.36</slf4j.version>
+	<log4j.version>2.17.1</log4j.version>
+	<fastjson.version>1.2.79</fastjson.version>
 	
 	<junit.version>5.8.2</junit.version>
 	<common-framework.version>2.0</common-framework.version>

@@ -8,7 +8,10 @@ import java.nio.charset.UnsupportedCharsetException;
  * 字符集工具类
  */
 public class CharsetUtil {
-
+	/**
+	 * US-ASCII
+	 */
+	public static final String US_ASCII = "US-ASCII";
 	/**
 	 * ISO-8859-1
 	 */
@@ -22,6 +25,10 @@ public class CharsetUtil {
 	 */
 	public static final String GBK = "GBK";
 
+	/**
+	 * US-ASCII
+	 */
+	public static final Charset CHARSET_US_ASCII = StandardCharsets.US_ASCII;
 	/**
 	 * ISO-8859-1
 	 */
