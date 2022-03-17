@@ -10,14 +10,14 @@
   </parent>
 	
   <groupId>com.wondersgroup.testspringboot</groupId>		
-  <artifactId>testspringboot</artifactId>
+  <artifactId>modelspringboot</artifactId>
   <version>2.1</version>
   <packaging>jar</packaging>
   
-  <name>brmp-web</name>
+  <name>modelspringboot</name>
   <url>http://maven.apache.org</url>
   
-  <description>测试springboot。</description>
+  <description>模板springboot。</description>
   
   <properties>
     <maven-jar-plugin.version>3.2.0</maven-jar-plugin.version>

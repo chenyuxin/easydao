@@ -2,12 +2,12 @@
   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
   <groupId>com.wondersgroup.test</groupId>
-  <artifactId>testSpring5</artifactId>
+  <artifactId>ModelSpringProject</artifactId>
   <packaging>war</packaging>
   <version>1.0</version>
-  <name>testSpring5</name>
+  <name>ModelSpringProject</name>
   <url>http://maven.apache.org</url>
-  <description>测试Spring5常用dao工具框架</description>
+  <description>模板Spring常用dao工具框架</description>
   
   <properties>
   	<failOnMissingWebXml>false</failOnMissingWebXml>

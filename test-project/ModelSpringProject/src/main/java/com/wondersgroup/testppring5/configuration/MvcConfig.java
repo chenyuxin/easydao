@@ -1,4 +1,4 @@
-package com.wondersgroup.test.testspringboot.configuration;
+package com.wondersgroup.testppring5.configuration;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -81,8 +81,6 @@ public class MvcConfig implements WebMvcConfigurer{
     public void addResourceHandlers(ResourceHandlerRegistry registry) {
         registry.addResourceHandler("/static/**")
             .addResourceLocations("/WEB-INF/static/");
-        registry.addResourceHandler("/**").addResourceLocations("classpath:/META-INF/resources/",
-				"classpath:/resources/", "classpath:/static/", "classpath:/public/");
     }
 	
 	/**
@@ -92,9 +90,7 @@ public class MvcConfig implements WebMvcConfigurer{
   	@Override
     public void configureDefaultServletHandling(DefaultServletHandlerConfigurer configurer) {
         configurer.enable();
-        //configurer.enable("dispatcherServlet");
     }
-	
 	
 	
 	
