@@ -3,6 +3,7 @@ package com.wondersgroup.commonutil.type.database;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonType;
 
 /**
@@ -32,7 +33,7 @@ public class TableType implements CommonType{
 	 * 获取表名
 	 */
 	public String getTableName() {
-		if (null != schema && !"".equals(schema) && !tableName.contains(".")) {
+		if (null != schema && !StringPool.BLANK.equals(schema) && !tableName.contains(".")) {
 			return schema.concat(".").concat(tableName);
 		} else {
 			return tableName;
@@ -52,7 +53,7 @@ public class TableType implements CommonType{
 			//TODO 验证表名合法性   tableName
 			
 			int schemaSplit = tableName.indexOf(".");
-			String schema = "";
+			String schema = StringPool.BLANK;
 			if (schemaSplit > 0) {
 				schema = tableName.substring(0,tableName.indexOf("."));
 			} 

@@ -2,16 +2,18 @@ package com.wondersgroup.commonutil.type.otherintf;
 
 /**
  *提供解析方法 
+ * @param <T>
+ * @param <E>
  *
  */
-public interface TypeParse<T> {
+public interface ParseType<T, E> {
 	
 	/**
 	 * 解析为对应的类型
 	 * @param value
 	 * @return
 	 */
-	T parse(Object value);
+	T parse(E value);
 	
 	/**
 	 * 解析为对应的类型

@@ -1,4 +1,4 @@
-package com.wondersgroup.commonutil.cipher;  
+  
   
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -6,6 +6,10 @@ import java.util.Date;
 
 import javax.crypto.Cipher;  
 import javax.crypto.spec.SecretKeySpec;
+
+import org.junit.jupiter.api.Test;
+
+import com.wondersgroup.commonutil.baseutil.BASE64Util;
 
 /** 
  * AES 是一种可逆加密算法，对用户的敏感信息加密处理 对原始数据进行AES加密后，在进行Base64编码转化； 
@@ -62,7 +66,7 @@ public class AES {
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");  
             cipher.init(Cipher.ENCRYPT_MODE, skeySpec);  
             byte[] encrypted = cipher.doFinal(sSrc.getBytes("utf-8")); 
-            result = BASE64.encryptBASE64(encrypted);  
+            result = BASE64Util.encryptBASE64(encrypted);  
         } catch (Exception e) {
             e.printStackTrace();  
         }   
@@ -78,7 +82,7 @@ public class AES {
             SecretKeySpec skeySpec = new SecretKeySpec(raw, "AES");  
             Cipher cipher = Cipher.getInstance("AES");  
             cipher.init(Cipher.DECRYPT_MODE, skeySpec);  
-            byte[] encrypted1 = BASE64.decryptBASE64B(sSrc);// 先用base64解密  
+            byte[] encrypted1 = BASE64Util.decryptBASE64B(sSrc);// 先用base64解密  
             byte[] original = cipher.doFinal(encrypted1);  
             String originalString = new String(original, "utf-8");  
             return originalString;  
@@ -88,7 +92,8 @@ public class AES {
         }  
     }  
   
-    public static void main(String[] args){ 
+    @Test
+    public void test(){ 
         /* 
          * 加密用的Key 可以用26个字母和数字组成 此处使用AES-128加密模式，key需要为16位。 
          */  

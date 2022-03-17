@@ -7,6 +7,7 @@ import java.util.Hashtable;
 
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.constant.RegexConst;
+import com.wondersgroup.commonutil.constant.StringPool;
 
 
 public class CommonUtilValidation {
@@ -83,7 +84,7 @@ public class CommonUtilValidation {
     public static String IdentityCardVerification(String idStr){
         String[] wf = { "1", "0", "X", "9", "8", "7", "6", "5", "4", "3", "2" };
         String[] checkCode = { "7", "9", "10", "5", "8", "4", "2", "1", "6", "3", "7", "9", "10", "5", "8", "4", "2" };
-        String iDCardNo = "";
+        String iDCardNo = StringPool.BLANK;
         try {
             //判断号码的长度 15位或18位
             if (idStr.length() != 15 && idStr.length() != 18) {
@@ -135,7 +136,7 @@ public class CommonUtilValidation {
             e.printStackTrace();
             return "身份证验证时出错";
         }
-        return "";
+        return StringPool.BLANK;
     }
     
     private final static Hashtable<String,String> hashtable = new Hashtable<String,String>();

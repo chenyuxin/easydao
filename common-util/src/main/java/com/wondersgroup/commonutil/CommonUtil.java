@@ -56,5 +56,18 @@ public class CommonUtil {
 		return MyObj.invokeMethod(obj, methodName, args);
 	}
 	
+	/**
+	 * 执行某个对象的方法
+	 * @param obj 执行对象
+	 * @param methodName 执行对象的方法名
+	 * @param parameterTypes 参数类型
+	 * @param args 执行方法的参数
+	 * @return
+	 * @throws Exception
+	 */
+	public static Object invokeMethod(Object obj, String methodName, Class<?>[] parameterTypes, Object... args) throws Exception {
+		return MyObj.invokeMethod(obj, methodName, parameterTypes,args);
+	}
+	
 	
 }

@@ -23,6 +23,7 @@ import com.wondersgroup.commondao.dao.daoutil.DaoConfResource;
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
 import com.wondersgroup.commondao.dao.daoutil.toolentity.QureyData4Cache;
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonTypeCaches;
 import com.wondersgroup.commonutil.type.database.DataBaseType;
 import com.wondersgroup.commonutil.type.database.TableType;
@@ -138,7 +139,7 @@ public class DaoFactory implements InitializingBean {
 				sBuffer.append(paramMap);
 			}
 		}
-		if (null != dataSrouceName && !"".equals(dataSrouceName) ) {
+		if (null != dataSrouceName && !StringPool.BLANK.equals(dataSrouceName) ) {
 			sBuffer.append(dataSrouceName);
 		}
 		return BaseUtil.getUUIDC(sBuffer.toString());
@@ -260,7 +261,7 @@ public class DaoFactory implements InitializingBean {
 	 * @param dataSourceName 数据源在spring配置文件bean的id
 	 */
 	public NamedParameterJdbcTemplate moreJdbcTemplate(String dataSourceName) {
-		if ("".equals(dataSourceName) || null == dataSourceName) {
+		if (StringPool.BLANK.equals(dataSourceName) || null == dataSourceName) {
 			return jdbcTemplate;//dataSourceName为空时,返回默认的jdbcTemplate
 		}
 		NamedParameterJdbcTemplate currentJdbcTemplate = cacheJdbcTemplates.get(dataSourceName);
@@ -290,7 +291,7 @@ public class DaoFactory implements InitializingBean {
 	/**
 	 * 上一次打印的sql
 	 */
-	private static String lastSql = "";
+	private static String lastSql = StringPool.BLANK;
 	/**
 	 * 根据配置是否,打印sql
 	 * @param sql
@@ -332,7 +333,7 @@ public class DaoFactory implements InitializingBean {
 		DruidDataSource dds = (DruidDataSource)applicationContext.getBean(dataSourceName);
 		String jdbcUsername = dds.getUsername();
 		String jdbcUrl = dds.getUrl();
-		String schema = "";
+		String schema = StringPool.BLANK;
 		if (getDataBaseType(dataSourceName).equals(DataBaseType.ORACLE)) {
 			schema = jdbcUsername;
 		} else if (getDataBaseType(dataSourceName).equals(DataBaseType.MYSQL)) {

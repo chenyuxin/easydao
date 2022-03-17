@@ -15,6 +15,7 @@ import com.wondersgroup.commondao.dao.daoutil.anotation.Column;
 import com.wondersgroup.commondao.dao.daoutil.anotation.Table;
 import com.wondersgroup.commondao.dao.daoutil.sqlreader.DaoSqlReader;
 import com.wondersgroup.commondao.dao.daoutil.toolentity.JoinOptions;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.database.DataBaseType;
 import com.wondersgroup.commonutil.type.database.TableType;
 
@@ -37,7 +38,7 @@ public class CommonSql {
 			String colName = DaoUtil.camelToUnderline(field.getName());
 			Column column = field.getAnnotation(Column.class);
 			if (null != column){
-				if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+				if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 					continue;
 				} else {
 					if ("select".equals(dbType)) {
@@ -79,7 +80,7 @@ public class CommonSql {
 			String name = new String(field.getName());
 			Column column = field.getAnnotation(Column.class);
 			if (null != column){
-				if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+				if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 					continue;
 				} else {
 					name = column.name().toLowerCase();
@@ -186,7 +187,7 @@ public class CommonSql {
 		boolean whereFlag = true;
 		for (int i = 0; i < fieldNameByIds.length; i++) {
 			String fieldNameById = fieldNameByIds[i];
-			if (null != fieldNameById && !"".equals(fieldNameById)) {
+			if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 				if(whereFlag){
 					sBuffer.append(" where ").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = :").append(fieldNameById);
 					whereFlag = false;
@@ -199,7 +200,7 @@ public class CommonSql {
 			
 		String sql = sBuffer.toString();
 		if ( !sql.contains("where")) {
-			return "";//没有筛选条件，fieldNameById的值不合适
+			return StringPool.BLANK;//没有筛选条件，fieldNameById的值不合适
 		}
 		
 		return  sql;
@@ -268,7 +269,7 @@ public class CommonSql {
 				Map.Entry<String, Object> param = e.next();
 				sBuffer.append(" :").append(param.getKey());
 				sBuffer.append(" AS \"");
-				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) ).append("\"");
+				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) ).append(StringPool.QUOTE);
 				if (e.hasNext()) {
 					sBuffer.append(",");
 				}
@@ -276,9 +277,9 @@ public class CommonSql {
 			sBuffer.append(" from dual ) t2 on ( ");
 			for (int i = 0; i < fieldNameByIds.length; i++) {
 				String fieldNameById = fieldNameByIds[i];
-				if (null != fieldNameById && !"".equals(fieldNameById)) {
+				if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 					sBuffer.append(" t1.").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = t2.").append(DaoUtil.camelToUnderline(fieldNameById));
-					if ( i != fieldNameByIds.length -1 && null != fieldNameByIds[i+1] && !"".equals(fieldNameByIds[i+1]) ) {
+					if ( i != fieldNameByIds.length -1 && null != fieldNameByIds[i+1] && !StringPool.BLANK.equals(fieldNameByIds[i+1]) ) {
 						sBuffer.append(" and ");
 					}
 				
@@ -346,7 +347,7 @@ public class CommonSql {
 		boolean whereFlag = true;
 		for (int i = 0; i < fieldNameByIds.length; i++) {
 			String fieldNameById = fieldNameByIds[i];
-			if (null != fieldNameById && !"".equals(fieldNameById)) {
+			if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 				if(whereFlag){
 					sBuffer.append(" where ").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = :").append(fieldNameById);
 					whereFlag = false;
@@ -359,7 +360,7 @@ public class CommonSql {
 			
 		String sql = sBuffer.toString();
 		if ( !sql.contains("where")) {
-			return "";//没有筛选条件，fieldNameById的值不合适
+			return StringPool.BLANK;//没有筛选条件，fieldNameById的值不合适
 		}
 		
 		return sql;
@@ -679,8 +680,8 @@ public class CommonSql {
 				if (fieldName.contains(" as ")){
 					int beginIndex = fieldName.lastIndexOf(" as ")+4;
 					fieldName = fieldName.substring(beginIndex);
-					if(fieldName.contains("\"")){
-						fieldName.replaceAll("\"", "");
+					if(fieldName.contains(StringPool.QUOTE)){
+						fieldName.replaceAll(StringPool.QUOTE, StringPool.BLANK);
 					}
 				}
 				sBuffer.append(fieldName);

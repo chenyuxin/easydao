@@ -4,6 +4,8 @@ import java.nio.charset.Charset;
 import java.nio.charset.StandardCharsets;
 import java.nio.charset.UnsupportedCharsetException;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * 字符集工具类
  */
@@ -99,7 +101,7 @@ public class CharsetUtil {
 		if (null == destCharset) {
 			destCharset = StandardCharsets.UTF_8;
 		}
-		if ( null == source || "".equals(source) || srcCharset.equals(destCharset)) {
+		if ( null == source || StringPool.BLANK.equals(source) || srcCharset.equals(destCharset)) {
 			return source;
 		}
 		return new String(source.getBytes(srcCharset), destCharset);

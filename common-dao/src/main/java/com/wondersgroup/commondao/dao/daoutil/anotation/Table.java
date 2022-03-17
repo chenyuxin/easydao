@@ -3,6 +3,8 @@ package com.wondersgroup.commondao.dao.daoutil.anotation;
 import java.lang.annotation.Retention;
 import java.lang.annotation.Target;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 import static java.lang.annotation.ElementType.TYPE;
 import static java.lang.annotation.RetentionPolicy.RUNTIME;
 
@@ -21,6 +23,6 @@ public @interface Table {
 	/**
 	 * 表中文名，或用于调用接口名
 	 */
-	String cName() default "";
+	String cName() default StringPool.BLANK;
 	
 }	

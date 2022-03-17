@@ -3,6 +3,8 @@ package com.wondersgroup.commonutil.type.language;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * json语言 相关格式的配置
  * 调用getInstance()方法获取实例
@@ -47,7 +49,7 @@ public class JSONType implements LanguageType {
 	@Override
 	public String getEscapeString(String value) {
 		String jsonValue = value.replaceAll("\\\\", "\\\\\\\\");//将数据值中含有 \ 符号转义能识别
-		jsonValue = jsonValue.replaceAll("\"", "\\\\\\\"");// 将数据值中含有   " 符号转义能识别
+		jsonValue = jsonValue.replaceAll(StringPool.QUOTE, "\\\\\\\"");// 将数据值中含有   " 符号转义能识别
 		return jsonValue;
 	}
 

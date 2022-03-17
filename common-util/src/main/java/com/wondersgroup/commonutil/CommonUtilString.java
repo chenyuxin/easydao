@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonType;
 import com.wondersgroup.commonutil.type.format.DateType;
 import com.wondersgroup.commonutil.type.language.JSONType;
@@ -25,10 +26,10 @@ public class CommonUtilString {
      * @return
      */
     public static String trimLeft(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.equals(StringPool.BLANK)) {
             return str;
         } else {
-            return str.replaceAll("^[　 ]+", "");
+            return str.replaceAll("^[　 ]+", StringPool.BLANK);
         }
     }
     
@@ -38,10 +39,10 @@ public class CommonUtilString {
      * @return
      */
     public static String trimRight(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || str.equals(StringPool.BLANK)) {
             return str;
         } else {
-            return str.replaceAll("[　 ]+$", "");
+            return str.replaceAll("[　 ]+$", StringPool.BLANK);
         }
     }
     
@@ -51,10 +52,10 @@ public class CommonUtilString {
      * @return
      */
     public static String trimAll(String str) {
-    	if (str == null || str.equals("")) {
+    	if (str == null || str.equals(StringPool.BLANK)) {
             return str;
         } else {
-        	return str.replaceAll("\\s*", "");
+        	return str.replaceAll("\\s*", StringPool.BLANK);
         }
 	}
     
@@ -121,12 +122,12 @@ public class CommonUtilString {
 				}
 				if (null == param && languageType != null && languageType.getTypeName().equals(XMLType.typeName)) {
 					//xml格式参数空值直接用空字符串
-					param = "";
+					param = StringPool.BLANK;
 				} 
 				sBuffer.append(param);
 				if (languageType != null && languageType.getTypeName().equals(JSONType.typeName)) {
 					String nullsign = sBuffer.substring(sBuffer.length()-5, sBuffer.length());
-					if (nullsign.equals("\"null") && oString.substring(current+1, current+2).equals("\"") ) {
+					if (nullsign.equals("\"null") && oString.substring(current+1, current+2).equals(StringPool.QUOTE) ) {
 						sBuffer.delete(sBuffer.length()-4,sBuffer.length());
 					}
 				}

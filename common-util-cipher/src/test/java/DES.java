@@ -1,4 +1,4 @@
-package com.wondersgroup.commonutil.cipher;
+
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -9,6 +9,10 @@ import javax.crypto.SecretKey;
 import javax.crypto.SecretKeyFactory;
 import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.IvParameterSpec;
+
+import org.junit.jupiter.api.Test;
+
+import com.wondersgroup.commonutil.baseutil.BASE64Util;
 
 public class DES {
 	/**
@@ -69,7 +73,7 @@ public class DES {
 			Cipher cipher=Cipher.getInstance("desede/CBC/PKCS5Padding");  
 			cipher.init(Cipher.ENCRYPT_MODE, key, new IvParameterSpec(bIv));  
 			byte[] encrypted = cipher.doFinal(str.getBytes("utf-8"));  
-			result = BASE64.encryptBASE64(encrypted);
+			result = BASE64Util.encryptBASE64(encrypted);
        } catch (Exception e) {  
            e.printStackTrace();
        }  
@@ -89,7 +93,7 @@ public class DES {
 			SecretKey securekey = keyFactory.generateSecret(desKey);
 			Cipher cipher = Cipher.getInstance("desede/CBC/PKCS5Padding");
 			cipher.init(Cipher.DECRYPT_MODE, securekey, iv);
-			byte[] encrypted1 = BASE64.decryptBASE64B(src);
+			byte[] encrypted1 = BASE64Util.decryptBASE64B(src);
 			result = new String(cipher.doFinal(encrypted1),"utf-8");
 		} catch (Exception e) {
 			e.printStackTrace();
@@ -97,7 +101,8 @@ public class DES {
 		return result;
 	}
 	
-	public static void main(String[] args) {
+	@Test
+	public void test() {
 		/*
 		String a = DES.encrypt( "1231中国","a03b6fe1ajikongshujuchuanshu",getsIv());
 		System.out.println(a);

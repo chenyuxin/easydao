@@ -11,6 +11,8 @@ import java.util.regex.Pattern;
 
 import javax.sql.rowset.serial.SerialClob;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * Dao工具
  */
@@ -49,8 +51,8 @@ public class DaoUtil {
 	  * @return 转换后的字符串
 	  */
 	public static String underlineToCamel(String line,boolean smallCamel){
-		if(line==null||"".equals(line)){
-			return "";
+		if(line==null||StringPool.BLANK.equals(line)){
+			return StringPool.BLANK;
 		}
 		StringBuffer sb=new StringBuffer();
 		Pattern pattern=Pattern.compile("([A-Za-z\\d]+)(_)?");
@@ -74,8 +76,8 @@ public class DaoUtil {
 	  * @return 转换后的字符串
 	  */
 	public static String camelToUnderline(String line){
-		if(line==null||"".equals(line)){
-			return "";
+		if(line==null||StringPool.BLANK.equals(line)){
+			return StringPool.BLANK;
 		}
 		line=String.valueOf(line.charAt(0)).toUpperCase().concat(line.substring(1));
 		StringBuffer sb=new StringBuffer();
@@ -84,7 +86,7 @@ public class DaoUtil {
 		while(matcher.find()){
 			String word=matcher.group();
 			sb.append(word.toUpperCase());
-			sb.append(matcher.end()==line.length()?"":"_");
+			sb.append(matcher.end()==line.length()?StringPool.BLANK:"_");
 		}
 		return sb.toString();
 	}
@@ -113,7 +115,7 @@ public class DaoUtil {
 			Type genericType = field.getGenericType();
 			if ( genericType.equals(String.class) ) {
 				String value = (String) field.get(obj);
-				if (null == value || "".equals(value)) {//将空值替换
+				if (null == value || StringPool.BLANK.equals(value)) {//将空值替换
 					field.set(obj, notNullMap.get(genericType));
 	  			}
 			} else if (null == field.get(obj)) {//如果是时间类型为空则返回一个默认日期，避免返回空字符串格式报错

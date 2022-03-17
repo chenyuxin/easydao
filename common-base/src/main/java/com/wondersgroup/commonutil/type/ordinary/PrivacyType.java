@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wondersgroup.commonutil.constant.RegexConst;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonType;
 
 /**
@@ -25,12 +26,12 @@ public enum PrivacyType implements CommonType {
 
 		@Override
 		public String getDisplayName() {
-			return "";
+			return StringPool.BLANK;
 		}
 
 		@Override
 		public String getRegex() {
-			return "";
+			return StringPool.BLANK;
 		}
 	},
 	/**
@@ -39,7 +40,7 @@ public enum PrivacyType implements CommonType {
 	ChineseName {
 		@Override
 		public String transform(String name) {
-			if (null == name || "".equals(name)) {
+			if (null == name || StringPool.BLANK.equals(name)) {
 				return name;
 			}
 			StringBuffer sBuffer = new StringBuffer(name.substring(0, 1));
@@ -65,7 +66,7 @@ public enum PrivacyType implements CommonType {
 	IdCard {
 		@Override
 		public String transform(String idCard) {
-			if (null == idCard || "".equals(idCard)) {
+			if (null == idCard || StringPool.BLANK.equals(idCard)) {
 				return idCard;
 			}
 			return idCard.substring(0, 1).concat("*************").concat(idCard.substring(14));
@@ -87,7 +88,7 @@ public enum PrivacyType implements CommonType {
 	TelNum {
 		@Override
 		public String transform(String telNum) {
-			if (null == telNum || "".equals(telNum)) {
+			if (null == telNum || StringPool.BLANK.equals(telNum)) {
 				return telNum;
 			}
 			return "*******".concat(telNum.substring(telNum.length()-4));
@@ -109,7 +110,7 @@ public enum PrivacyType implements CommonType {
 	PhoneNum {
 		@Override
 		public String transform(String phoneNum) {
-			if (null == phoneNum || "".equals(phoneNum)) {
+			if (null == phoneNum || StringPool.BLANK.equals(phoneNum)) {
 				return phoneNum;
 			}
 			return phoneNum.substring(0,1).concat("********").concat(phoneNum.substring(phoneNum.length()-2));
@@ -131,7 +132,7 @@ public enum PrivacyType implements CommonType {
 	Address {
 		@Override
 		public String transform(String address) {
-			if (null == address || "".equals(address)) {
+			if (null == address || StringPool.BLANK.equals(address)) {
 				return address;
 			}
 			StringBuffer sBuffer = new StringBuffer(address.substring(0, 6));
@@ -157,7 +158,7 @@ public enum PrivacyType implements CommonType {
 	Email {
 		@Override
 		public String transform(String email) {
-			if (null == email || "".equals(email)) {
+			if (null == email || StringPool.BLANK.equals(email)) {
 				return email;
 			}
 			StringBuffer sBuffer = new StringBuffer(email.substring(0, 1));
@@ -184,7 +185,7 @@ public enum PrivacyType implements CommonType {
 	BankCardNum {
 		@Override
 		public String transform(String bankCardNum) {
-			if (null == bankCardNum || "".equals(bankCardNum)) {
+			if (null == bankCardNum || StringPool.BLANK.equals(bankCardNum)) {
 				return bankCardNum;
 			}
 			StringBuffer sBuffer = new StringBuffer(bankCardNum.substring(0, 6));
@@ -209,7 +210,7 @@ public enum PrivacyType implements CommonType {
 	IPv4 {
 		@Override
 		public String transform(String IPv4) {
-			if (null == IPv4 || "".equals(IPv4)) {
+			if (null == IPv4 || StringPool.BLANK.equals(IPv4)) {
 				return IPv4;
 			}
 			String[] ipcs = IPv4.split("\\.");

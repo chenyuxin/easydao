@@ -4,6 +4,8 @@ import java.text.ParsePosition;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * 日期类型的操作类
  * 传入或修改本实例配置,用以告知通用工具类的方法如何操作
@@ -41,7 +43,7 @@ public class DateType implements FormatType {
 	public String getFormatValue(Object oValue) {
 		SimpleDateFormat sdf = new SimpleDateFormat(DEFAULT_FORMAT_TYPE);
 		String format = sdf.format(oValue);
-		format = format.replaceAll(" 00:00:00", "");
+		format = format.replaceAll(" 00:00:00", StringPool.BLANK);
 		return format;
 //		return DateFormatUtils.format((Date) oValue, DEFAULT_FORMAT_TYPE);
 	}

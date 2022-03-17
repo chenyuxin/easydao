@@ -10,16 +10,17 @@ import java.util.Map;
 import org.springframework.util.Base64Utils;
 
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonType;
 import com.wondersgroup.commonutil.type.format.DateType;
-import com.wondersgroup.commonutil.type.otherintf.TypeParse;
+import com.wondersgroup.commonutil.type.otherintf.ParseType;
 
 /**
  * 字段类型用于同数据库交互
  *
  */
 @SuppressWarnings("rawtypes")
-public enum FieldType implements CommonType,TypeParse {
+public enum FieldType implements CommonType,ParseType {
 	
 	/**
 	 * java程序的类型
@@ -86,7 +87,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Integer parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = -1;//替换null值
 				return null;
 			} else {
@@ -131,7 +132,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Float parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = 0.0;
 				return null;
 			} else {
@@ -175,7 +176,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Date parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = DateType.getInstance().getParseValue("1900-01-01");//替换null值
 				return null;
 			} else {
@@ -221,7 +222,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Long parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = -1L;
 				return null;
 			} else {
@@ -265,7 +266,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public Double parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = 0.0;
 				return null;
 			} else {
@@ -393,11 +394,13 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public byte[] parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = [];
 				return null;
 			} else {
-				if (value instanceof String) {
+				if (value instanceof byte[]) {
+					return (byte[]) value;
+				} else if (value instanceof String) {
 					String str = String.valueOf(value);
 					if (BaseUtil.isBase64(str)) {
 						//传输过来的byte[]转json时默认转为 Base64的字符串,
@@ -405,16 +408,14 @@ public enum FieldType implements CommonType,TypeParse {
 					} else {
 						return str.getBytes();
 					}
-				} else if (value instanceof byte[]) {
-					return (byte[]) value;
-				}
+				} 
 			}
 			return null;
 		}
 		
 		@Override
 		public Class getJavaClass() {
-			return Byte.class;
+			return byte[].class;
 		}
 	},
 	
@@ -440,7 +441,7 @@ public enum FieldType implements CommonType,TypeParse {
 
 		@Override
 		public BigDecimal parse(Object value) {
-			if ( null == value || "".equals(value) ) {
+			if ( null == value || StringPool.BLANK.equals(value) ) {
 				//value = 0;
 				return null;
 			} else {

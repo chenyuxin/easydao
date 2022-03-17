@@ -6,6 +6,7 @@ import java.util.Map;
 import com.wondersgroup.commondao.dao.daoutil.SqlReader;
 import com.wondersgroup.commonutil.MyObj;
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 
 /**
  * 查询缓存对象
@@ -75,7 +76,7 @@ public class QureyData4Cache<T> {
 				sBuffer.append(this.paramMap);
 			}
 		}
-		if (null != this.dataSourceName && !"".equals(this.dataSourceName) ) {
+		if (null != this.dataSourceName && !StringPool.BLANK.equals(this.dataSourceName) ) {
 			sBuffer.append(this.dataSourceName);
 		}
 		return BaseUtil.getUUIDC(sBuffer.toString());//根据字符串生成固定id
