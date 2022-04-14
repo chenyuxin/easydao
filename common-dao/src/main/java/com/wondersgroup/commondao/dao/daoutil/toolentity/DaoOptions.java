@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import com.wondersgroup.commondao.dao.custom.QueryCondition;
+import com.wondersgroup.commondao.dao.daoutil.DaoEnumOptions;
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.type.database.TableType;
@@ -36,6 +37,12 @@ public class DaoOptions {
 	 * 数据库 表类型，获取数据库表名
 	 */
 	private TableType tableType;
+	
+	/**
+	 * 当发生异常或错误时默认执行结果返回String错误消息，查询结果默认返回null，
+	 * 若传入异常或错误则commonDao将错误消息封装，抛出RuntimeException。
+	 */
+	private boolean runtimeException = false;
 	
 	/**
 	 * CommonDao查询方法，查询方式设置。
@@ -99,6 +106,17 @@ public class DaoOptions {
 		return tableType;
 	}
 	
+	
+	/**
+	 * 获取异常对象<br>
+	 * 
+	 * 当发生异常或错误时默认执行结果返回String错误消息，查询结果默认返回null，<br>
+	 * 若传入异常或错误则commonDao将错误消息封装，抛出RuntimeException。<br>
+	 */
+	public boolean isThrowException() {
+		return this.runtimeException;
+	}
+
 	/**
 	 * 放入当前的Dao配置
 	 * @return 返回数据源
@@ -123,6 +141,8 @@ public class DaoOptions {
 				}
 			} else if ( object instanceof TableType) {
 				this.tableType = (TableType) object;
+			} else if ( object instanceof DaoEnumOptions) {
+				this.runtimeException = true;
 			} else if ( object instanceof Object[]) {
 				if (((Object[]) object).length>0) {
 					dataSourceName = putDaoOptions(queryConditions, paramMap, (Object[])object);

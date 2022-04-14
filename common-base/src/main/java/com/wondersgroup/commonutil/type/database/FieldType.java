@@ -165,7 +165,7 @@ public enum FieldType implements CommonType,ParseType {
 				dataBaseType.dbColType.put(this.name(), "datetime");
 				break;
 			case POSTGREPSQLt:
-				dataBaseType.dbColType.put(this.name(), "date");
+				dataBaseType.dbColType.put(this.name(), "timestamp");
 				break;
 
 			default:

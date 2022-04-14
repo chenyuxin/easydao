@@ -9,6 +9,7 @@ import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 
 import org.apache.commons.lang3.StringUtils;
+import org.junit.jupiter.api.Test;
 
 
 public class ThreeDES {
@@ -126,7 +127,8 @@ public class ThreeDES {
 		}
 	}
 	
-	public static void main(String[] args) {
+	@Test
+	public void test() {
 		// 需要加密的字串  
 	    String cSrc = "就是你@123";  
 	    System.out.println(cSrc + "  长度为" + cSrc.length());  

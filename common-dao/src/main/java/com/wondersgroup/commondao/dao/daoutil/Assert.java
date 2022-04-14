@@ -4,6 +4,7 @@ package com.wondersgroup.commondao.dao.daoutil;
  * commonDao的断言<br>
  * 用于执行失败的dao在事务层抛出异常RuntimeException，回滚事务。
  */
+@Deprecated
 public class Assert {
 	
 	/**
@@ -11,6 +12,7 @@ public class Assert {
 	 * 用于执行失败的dao在事务层抛出异常RuntimeException，回滚事务。
 	 * @param commonDaoResult commonDao返回的执行消息
 	 */
+	@Deprecated
 	public static void isSuccessMessage(String commonDaoResult) {
 		if(commonDaoResult.contains(DaoUtil.saveObj_FAILED_MESSAGE)
 				|| commonDaoResult.contains(DaoUtil.updateObj_FAILED_MESSAGE)

@@ -15,7 +15,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.wondersgroup.commondao.dao.intf.CommonDao;
+import com.wondersgroup.commonutil.baseutil.BASE64Util;
 import com.wondersgroup.commonutil.cipher.BASE64;
+import com.wondersgroup.commonutil.cipher.Cipher;
 import com.wondersgroup.commonutil.cipher.MD5;
 
 @RestController
@@ -40,13 +42,35 @@ public class TestRestController {
 		List<Map<String,Object>> kz_renwuzhaopian = commonDao.selectObjMap(sqlString);
 		byte[] b =  (byte[]) kz_renwuzhaopian.get(0).get("a");
 		String zpString = Base64Utils.encodeToString(b);
-		String zpString2 = BASE64.encryptBASE64(b);
+		String zpString2 = BASE64Util.encryptBASE64(b);
 		if (zpString.equals(zpString2)) {
 			System.out.println("=");
-			System.out.println(zpString);
+			//System.out.println(zpString);
 		}
-		System.out.println(MD5.EncoderByMd5(zpString));
-		return zpString2;
+		try {
+			System.out.println(Cipher.MD5.encrypt(zpString));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		byte[] b2 = commonDao.selectBaseObj(sqlString, byte[].class);
+		String zp2String = Base64Utils.encodeToString(b2);
+		String zp2String2 = BASE64Util.encryptBASE64(b2);
+		if (zp2String.equals(zpString2)) {
+			System.out.println("=2");
+			//System.out.println(zp2String);
+		}
+		if (zp2String2.equals(zpString2)) {
+			System.out.println("=3");
+			//System.out.println(zp2String2);
+		}
+		try {
+			System.out.println(Cipher.MD5.encrypt(zp2String2));
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return zpString2 + "<br>" + zp2String2;
 	}
 
 

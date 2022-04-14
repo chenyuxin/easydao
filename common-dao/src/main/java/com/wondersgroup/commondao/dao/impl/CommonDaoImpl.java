@@ -74,18 +74,22 @@ public class CommonDaoImpl implements CommonDao {
 	@Override
 	public String useTable(String ctrlSql, Object... daoOptionsO) {
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO);
-		return useTable(daoOptions.getParamMap(),daoOptions.getDataSourceName(),ctrlSql);
+		return useTable(daoOptions.getParamMap(),daoOptions.getDataSourceName(),ctrlSql,daoOptions.isThrowException());
 	}
 	
-	private String useTable(Map<String, Object> paramMap, String dataSourceName, String ctrlSql) {
+	private String useTable(Map<String, Object> paramMap, String dataSourceName, String ctrlSql,boolean isThrowException) {
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		daoFactory.printSql(ctrlSql);
 		try {
 			currentJdbcTemplate.update(ctrlSql, paramMap);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.useTable_FAILED_MESSAGE;
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.useTable_FAILED_MESSAGE;
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,SqlReader.getTablesFromSql(ctrlSql));
 		return DaoUtil.useTable_SUCCESS_MESSAGE;
@@ -95,21 +99,21 @@ public class CommonDaoImpl implements CommonDao {
 	public String delCache(TableType tableType, Object... daoOptionsO) {
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO);
 		//当调用了 useTable 时  和使用了查询缓存时，该表名的所有的 内存缓存将移除。
-		return useTable(daoOptions.getParamMap(),daoOptions.getDataSourceName(),"select '移除该表内存缓存' from ".concat(tableType.getTableName()));
+		return useTable(daoOptions.getParamMap(),daoOptions.getDataSourceName(),"select '移除该表内存缓存' from ".concat(tableType.getTableName()).concat(" where 1=0 "),false);
 	}
 	
 	@Override
 	public String saveObj(Object object, Object... daoOptionsO) {
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO);
 		if (object instanceof List) {
-			return saveObjList((List<?>) object, daoOptions.getTableType(), daoOptions.getDataSourceName() );
+			return saveObjList((List<?>) object, daoOptions.getTableType(), daoOptions.getDataSourceName(),daoOptions.isThrowException() );
 		} else {
-			return saveObjSingle(object, daoOptions.getTableType(),  daoOptions.getDataSourceName());
+			return saveObjSingle(object, daoOptions.getTableType(),  daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> String saveObjList(List<T> list, TableType tableType, String dataSourceName) {
+	private <T> String saveObjList(List<T> list, TableType tableType, String dataSourceName,boolean isThrowException) {
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		Class<T> clazz = (Class<T>) list.get(0).getClass();
 		//System.out.println(clazz.getSimpleName());
@@ -132,9 +136,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.batchUpdate(sql, paramMaps);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println(e.getMessage());
-			return DaoUtil.saveObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				//e.printStackTrace();
+				System.out.println(e.getMessage());
+				return DaoUtil.saveObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -142,7 +150,7 @@ public class CommonDaoImpl implements CommonDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String saveObjSingle(Object object, TableType tableType, String dataSourceName) {
+	private String saveObjSingle(Object object, TableType tableType, String dataSourceName,boolean isThrowException) {
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		@SuppressWarnings("rawtypes")
 		Class clazz = object.getClass();
@@ -162,9 +170,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.update(sql, paramMap);
 		} catch (Exception e) {
-			//e.printStackTrace();
-			System.out.println(e.getMessage());
-			return DaoUtil.saveObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				//e.printStackTrace();
+				System.out.println(e.getMessage());
+				return DaoUtil.saveObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -177,10 +189,10 @@ public class CommonDaoImpl implements CommonDao {
 		if (object instanceof List) {
 			List<?> list = (List<?>)object;
 			String[] fieldNameByIds = TableUtil.getIdsbyObj(list.get(0).getClass());
-			return updateList(list, fieldNameByIds, null, daoOptions.getDataSourceName() );
+			return updateList(list, fieldNameByIds, null, daoOptions.getDataSourceName(),daoOptions.isThrowException() );
 		} else {
 			String[] fieldNameByIds = TableUtil.getIdsbyObj(object.getClass());
-			return updateSingle(object, fieldNameByIds, null, daoOptions.getDataSourceName());
+			return updateSingle(object, fieldNameByIds, null, daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		}
 	}
 	
@@ -188,14 +200,14 @@ public class CommonDaoImpl implements CommonDao {
 	public String updateMap(Object object, String[] fieldNameByIds,TableType tableType, Object... daoOptionsO) {
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO,tableType);
 		if (object instanceof List) {
-			return updateList((List<?>) object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName() );
+			return updateList((List<?>) object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName(),daoOptions.isThrowException() );
 		} else {
-			return updateSingle(object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName());
+			return updateSingle(object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> String updateList(List<T> list, String[] fieldNameByIds, TableType tableType, String dataSourceName) {
+	private <T> String updateList(List<T> list, String[] fieldNameByIds, TableType tableType, String dataSourceName,boolean isThrowException) {
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		Class<T> clazz = (Class<T>) list.get(0).getClass();
 		String sql;
@@ -219,9 +231,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.batchUpdate(sql, paramMaps);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.updateObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.updateObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -229,7 +245,7 @@ public class CommonDaoImpl implements CommonDao {
 	}
 
 	@SuppressWarnings("unchecked")
-	private String updateSingle(Object object, String[] fieldNameByIds, TableType tableType, String dataSourceName) {
+	private String updateSingle(Object object, String[] fieldNameByIds, TableType tableType, String dataSourceName, boolean isThrowException) {
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		Map<String,Object> paramMap;
 		String sql;
@@ -246,9 +262,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.update(sql, paramMap);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.updateObj_FAILED_MESSAGE;
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.updateObj_FAILED_MESSAGE;
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -261,10 +281,10 @@ public class CommonDaoImpl implements CommonDao {
 		if (object instanceof List) {
 			List<?> list = (List<?>)object;
 			String[] fieldNameByIds = TableUtil.getIdsbyObj(list.get(0).getClass());
-			return saveOrUpdateList(list, fieldNameByIds, null, daoOptions.getDataSourceName() );
+			return saveOrUpdateList(list, fieldNameByIds, null, daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		} else {
 			String[] fieldNameByIds = TableUtil.getIdsbyObj(object.getClass());
-			return saveOrUpdateSingle(object, fieldNameByIds, null, daoOptions.getDataSourceName());
+			return saveOrUpdateSingle(object, fieldNameByIds, null, daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		}
 	}
 	
@@ -272,14 +292,14 @@ public class CommonDaoImpl implements CommonDao {
 	public String saveOrUpdateMap(Object object, String[] fieldNameByIds,TableType tableType, Object... daoOptionsO){
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO,tableType);
 		if (object instanceof List) {
-			return saveOrUpdateList((List<?>) object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName() );
+			return saveOrUpdateList((List<?>) object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName(), daoOptions.isThrowException() );
 		} else {
-			return saveOrUpdateSingle(object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName());
+			return saveOrUpdateSingle(object, fieldNameByIds, daoOptions.getTableType(), daoOptions.getDataSourceName(),daoOptions.isThrowException() );
 		}
 	}
 	
 	@SuppressWarnings("unchecked")
-	private String saveOrUpdateSingle(Object object, String[] fieldNameByIds, TableType tableType, String dataSourceName){
+	private String saveOrUpdateSingle(Object object, String[] fieldNameByIds, TableType tableType, String dataSourceName,boolean isThrowException){
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		DataBaseType dataBaseType = daoFactory.getDataBaseType(dataSourceName);//获取数据库类型
 		Map<String,Object> paramMap;
@@ -297,9 +317,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.update(sql, paramMap);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.mergeObj_FAILED_MESSAGE;
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.mergeObj_FAILED_MESSAGE;
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -307,7 +331,7 @@ public class CommonDaoImpl implements CommonDao {
 	}
 	
 	@SuppressWarnings("unchecked")
-	private <T> String saveOrUpdateList(List<T> list, String[] fieldNameByIds, TableType tableType, String dataSourceName){
+	private <T> String saveOrUpdateList(List<T> list, String[] fieldNameByIds, TableType tableType, String dataSourceName,boolean isThrowException){
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		DataBaseType dataBaseType = daoFactory.getDataBaseType(dataSourceName);//获取数据库类型
 		
@@ -333,9 +357,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.batchUpdate(sql, paramMaps);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.mergeObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.mergeObj_FAILED_MESSAGE.concat(": ").concat(e.getMessage());
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -345,10 +373,10 @@ public class CommonDaoImpl implements CommonDao {
 	@Override
 	public String deleteObj(Object object, Object... daoOptionsO){
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO);
-		return deleteObjSingle(object, daoOptions.getDataSourceName());
+		return deleteObjSingle(object, daoOptions.getDataSourceName(),daoOptions.isThrowException());
 	}
 	
-	private String deleteObjSingle(Object object, String dataSourceName){
+	private String deleteObjSingle(Object object, String dataSourceName,boolean isThrowException){
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		Map<String,Object> paramMap = TableUtil.object2Map(object);
 		String[] fieldNameByIds = TableUtil.getIdsbyObj(object.getClass());
@@ -359,9 +387,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.update(sql, paramMap);
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.delObj_FAILED_MESSAGE;
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.delObj_FAILED_MESSAGE;
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableType.getTableName());
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -371,10 +403,10 @@ public class CommonDaoImpl implements CommonDao {
 	@Override
 	public String delTruncateTable(TableType tableType, Object... daoOptionsO){
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO,tableType);
-		return delTruncateTable(daoOptions.getTableType(),daoOptions.getDataSourceName());
+		return delTruncateTable(daoOptions.getTableType(),daoOptions.getDataSourceName(),daoOptions.isThrowException());
 	}
 
-	private String delTruncateTable(TableType tableType, String dataSourceName){
+	private String delTruncateTable(TableType tableType, String dataSourceName,boolean isThrowException){
 		NamedParameterJdbcTemplate currentJdbcTemplate = daoFactory.moreJdbcTemplate(dataSourceName);
 		String tableName = tableType.getTableName();
 		String sql = "truncate table ".concat(tableName);
@@ -382,9 +414,13 @@ public class CommonDaoImpl implements CommonDao {
 		try {
 			currentJdbcTemplate.update(sql, new HashMap<String,Object>());
 		} catch (Exception e) {
-			System.out.println(e.getMessage());
-			//e.printStackTrace();
-			return DaoUtil.truncateTable_FAILED_MESSAGE;
+			if (isThrowException) {
+				throw new RuntimeException(e.getMessage());
+			} else {
+				System.out.println(e.getMessage());
+				//e.printStackTrace();
+				return DaoUtil.truncateTable_FAILED_MESSAGE;
+			}
 		}
 		daoFactory.checkQureyDataCacheMap(dataSourceName,tableName);
 		daoFactory.putTableTypeCache(tableType,dataSourceName);
@@ -401,7 +437,7 @@ public class CommonDaoImpl implements CommonDao {
 	
 	
 	
-	private List<Map<String, Object>> selectObjMap(Map<String, Object> paramMap, String dataSourceName, String sql) {
+	private List<Map<String, Object>> selectObjMap(Map<String, Object> paramMap, String dataSourceName, String sql,boolean isThrowException) {
 		@SuppressWarnings("unchecked")
 		List<Map<String, Object>> objList = (List<Map<String, Object>>) daoFactory.getQureyDataCache(sql, paramMap, dataSourceName);
 		if (null == objList) {
@@ -410,8 +446,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				objList = currentJdbcTemplate.queryForList(sql, paramMap);
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (isThrowException) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(objList, sql, paramMap, dataSourceName);
 		}
@@ -421,7 +461,7 @@ public class CommonDaoImpl implements CommonDao {
 	@Override
 	public List<Map<String, Object>> selectObjMap(String sql, Object... daoOptionsO) {
 		DaoOptions daoOptions = new DaoOptions(daoOptionsO);
-		return selectObjMap(daoOptions.getParamMap(), daoOptions.getDataSourceName(), sql);
+		return selectObjMap(daoOptions.getParamMap(), daoOptions.getDataSourceName(), sql,daoOptions.isThrowException());
 	}
 	
 	@Override
@@ -430,8 +470,7 @@ public class CommonDaoImpl implements CommonDao {
 		Map<String, Object> paramMapDao = new HashMap<String,Object>();
 		paramMapDao.putAll(daoOptions.getParamMap());
 		String sql = CommonSql.selectSql4Map(attributeNames, daoOptions.getTableType().getTableName(), paramMapDao, daoOptions.getQueryConditions());
-		
-		List<Map<String, Object>> maps = selectObjMap(paramMapDao, daoOptions.getDataSourceName(), sql);
+		List<Map<String, Object>> maps = selectObjMap(paramMapDao, daoOptions.getDataSourceName(), sql,daoOptions.isThrowException());
 		if (maps != null) {
 			daoFactory.putTableTypeCache(tableType,daoOptions.getDataSourceName());
 		}
@@ -446,7 +485,7 @@ public class CommonDaoImpl implements CommonDao {
 		Map<String, Object> paramMapDao = new HashMap<String,Object>();
 		paramMapDao.putAll(daoOptions.getParamMap());
 		String sql = CommonSql.selectSql4Map(attributeNames,daoOptions.getTableType().getTableName(),currentPage ,pageSize,dataBaseType,paramMapDao,daoOptions.getQueryConditions());
-		List<Map<String, Object>> objList = selectObjMap(sql, paramMapDao, daoOptions.getDataSourceName());
+		List<Map<String, Object>> objList = selectObjMap(sql, paramMapDao, daoOptions.getDataSourceName(),daoOptions.isThrowException());
 		int total = getRecords(tableType,daoOptionsO);//返回记录数并缓存默认数据源的tableType
 		return new PageBean<Map<String, Object>>(total, pageSize, currentPage , objList);
 	}
@@ -469,8 +508,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				objList = currentJdbcTemplate.query(sql, paramMapDao,new BeanPropertyRowMapper<T>(clazz));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			int total = getRecords(tableType,daoOptionsO);//返回记录数并缓存默认数据源的tableType
 			pageBean = new PageBean<T>(total, pageSize, currentPage , objList);
@@ -499,8 +542,12 @@ public class CommonDaoImpl implements CommonDao {
 					objList = currentJdbcTemplate.query(pagingSql, paramMapDao,new BeanPropertyRowMapper<T>(clazz));
 				}
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			
 			String countSql = CommonSql.countSql(sql);
@@ -526,8 +573,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				objList = currentJdbcTemplate.query(sql, paramMapDao,new BeanPropertyRowMapper<T>(clazz));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(objList, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -550,8 +601,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				objList = currentJdbcTemplate.query(sql, paramMapDao,new BeanPropertyRowMapper<T>(clazz));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(objList, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -573,8 +628,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				object = currentJdbcTemplate.queryForObject(sql, paramMapDao,new BeanPropertyRowMapper<T>(clazz));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(object, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -594,8 +653,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				object = currentJdbcTemplate.queryForObject(sql, paramMapDao, new BeanPropertyRowMapper<T>(clazz));
 			} catch (Exception e) {
-				System.out.println(e.getMessage());
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println(e.getMessage());
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(object, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -615,8 +678,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				object = currentJdbcTemplate.queryForObject(sql, paramMapDao, clazz);
 			} catch (Exception e) {
-				System.out.println("selectBaseObj自定义sql查询获取基本类: ".concat(e.getMessage()));
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println("selectBaseObj自定义sql查询获取基本类: ".concat(e.getMessage()));
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(object, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -636,8 +703,12 @@ public class CommonDaoImpl implements CommonDao {
 			try {
 				objectList = currentJdbcTemplate.queryForList(sql, paramMapDao, clazz);
 			} catch (Exception e) {
-				System.out.println("selectBaseObj自定义sql查询获取基本类: ".concat(e.getMessage()));
-				//e.printStackTrace();
+				if (daoOptions.isThrowException()) {
+					throw new RuntimeException(e.getMessage());
+				} else {
+					System.out.println("selectBaseObj自定义sql查询获取基本类: ".concat(e.getMessage()));
+					//e.printStackTrace();
+				}
 			}
 			daoFactory.putQureyDataCache(objectList, sql, paramMapDao, daoOptions.getDataSourceName());
 		}
@@ -664,7 +735,7 @@ public class CommonDaoImpl implements CommonDao {
 	public List<Map<String, Object>> selectJoin(JoinOptions joinOptions) {
 		Map<String, Object> paramMap = new HashMap<String, Object>();
 		String sql = CommonSql.joinSql(joinOptions, paramMap);
-		return selectObjMap(paramMap, joinOptions.getCurrentDaoOptions().getDataSourceName(), sql);
+		return selectObjMap(paramMap, joinOptions.getCurrentDaoOptions().getDataSourceName(), sql,joinOptions.getCurrentDaoOptions().isThrowException());
 	}
 
 	

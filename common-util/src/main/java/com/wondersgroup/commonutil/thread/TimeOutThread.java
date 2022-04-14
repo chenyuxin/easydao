@@ -25,16 +25,37 @@ public class TimeOutThread extends Thread {
 	private String methodName;
 	
 	/**
+	 * 对象的关闭方法执行参数
+	 */
+	private Object[] closeMethodParams = null;
+	
+	/**
 	 * 超时监听线程或客户端等，超时时停止。
 	 * @param timeOut 超时时间
 	 * @param object 某线程或客户端
-	 * @param methodName 停止(或超时后要执行的对象)的方法名，方法没有参数
+	 * @param methodName 停止(或超时后要执行的对象)的方法名
 	 */
 	public TimeOutThread(long timeOut, Object object,String methodName) {
 		super();
 		this.timeOut = timeOut;
 		this.object = object;
 		this.methodName = methodName;
+	}
+	
+	
+	/**
+	 * 超时监听线程或客户端等，超时时停止。
+	 * @param timeOut 超时时间
+	 * @param object 某线程或客户端
+	 * @param methodName 停止(或超时后要执行的对象)的方法名
+	 * @param ags 停止方法如果有传参
+	 */
+	public TimeOutThread(long timeOut, Object object,String methodName,Object... ags) {
+		super();
+		this.timeOut = timeOut;
+		this.object = object;
+		this.methodName = methodName;
+		this.closeMethodParams = ags;
 	}
 	
 	/**
@@ -51,8 +72,8 @@ public class TimeOutThread extends Thread {
 	 * 超时守护线程执行对象的关闭或终止方法。
 	 * @throws Exception
 	 */
-	public void doClose() throws Exception {
-		MyObj.invokeMethod(this.object, this.methodName, new Object[0]);
+	public void doClose(Object... ags) throws Exception {
+		MyObj.invokeMethod(this.object, this.methodName, ags);
 	}
 	
 	@Override
@@ -60,7 +81,7 @@ public class TimeOutThread extends Thread {
 		try {
 			Thread.sleep(timeOut);
 			System.out.println(this.object.getClass().getName().concat(": 执行超时"));
-			this.doClose();
+			this.doClose(this.closeMethodParams);
 		} catch (Exception e) {
 			e.printStackTrace();
 		} 

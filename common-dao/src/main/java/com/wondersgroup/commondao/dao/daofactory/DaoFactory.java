@@ -1,9 +1,7 @@
 package com.wondersgroup.commondao.dao.daofactory;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.Iterator;
-import java.util.LinkedList;
 import java.util.Map;
 import java.util.Map.Entry;
 
@@ -11,6 +9,8 @@ import javax.annotation.Resource;
 import javax.sql.DataSource;
 
 import java.util.Queue;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentLinkedQueue;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -73,18 +73,18 @@ public class DaoFactory implements InitializingBean {
 	 * 查询结果缓存
 	 * 数据
 	 */
-	private static final Map<String, QureyData4Cache<?>> QureyDataCacheMap = new HashMap<String, QureyData4Cache<?>>();
+	private static final Map<String, QureyData4Cache<?>> QureyDataCacheMap = new ConcurrentHashMap<String, QureyData4Cache<?>>();
 	
 	/**
 	 * 查询结果缓存key的队列
 	 */
-	private static final Queue<String> cacheMapKeyQueue = new LinkedList<String>();
+	private static final Queue<String> cacheMapKeyQueue = new ConcurrentLinkedQueue<String>();
 	
 	/**
 	 * 最后一次检测 查询结果缓存
 	 * 数据的时间
 	 */
-	private static long lastCheckQureyDataCacheMapTime = new Date().getTime();
+	private static Long lastCheckQureyDataCacheMapTime = System.currentTimeMillis();
 	
 	/**
 	 *  查询结果缓存map 操作锁,安全放入和删除节点
@@ -96,7 +96,7 @@ public class DaoFactory implements InitializingBean {
 	 * @return
 	 */
 	private void checkQureyDataCacheMap() {
-		long currentTime = new Date().getTime();
+		long currentTime = System.currentTimeMillis();
 		if (lastCheckQureyDataCacheMapTime + 5000 > currentTime) {//5秒内检查过
 			return;
 		}
@@ -113,7 +113,9 @@ public class DaoFactory implements InitializingBean {
 				} 
 			}
 		}
-		lastCheckQureyDataCacheMapTime = currentTime;//完成处理后设置最后检查缓存时间
+		synchronized (lastCheckQureyDataCacheMapTime) {
+			lastCheckQureyDataCacheMapTime = currentTime;//完成处理后设置最后检查缓存时间
+		}
 	}
 	
 	/**
@@ -255,7 +257,7 @@ public class DaoFactory implements InitializingBean {
 	/**
 	 * 数据源缓存 
 	 */
-	private final static Map<String,NamedParameterJdbcTemplate> cacheJdbcTemplates = new HashMap<String,NamedParameterJdbcTemplate>();
+	private final static Map<String,NamedParameterJdbcTemplate> cacheJdbcTemplates = new ConcurrentHashMap<String,NamedParameterJdbcTemplate>();
 	/**
 	 * 使用自定义数据源，不传值使用默认的数据源
 	 * @param dataSourceName 数据源在spring配置文件bean的id
@@ -269,8 +271,8 @@ public class DaoFactory implements InitializingBean {
 			return currentJdbcTemplate;
 		} else {
 			DataSource dataSource = (DataSource)applicationContext.getBean(dataSourceName); 
+			//Assert.notNull(dataSource, "没有找到对应数据源获取失败");
 			cacheJdbcTemplates.put(dataSourceName, new NamedParameterJdbcTemplate(dataSource));
-			
 			return cacheJdbcTemplates.get(dataSourceName);
 		}
 	}
@@ -289,22 +291,13 @@ public class DaoFactory implements InitializingBean {
 	
 	
 	/**
-	 * 上一次打印的sql
-	 */
-	private static String lastSql = StringPool.BLANK;
-	/**
 	 * 根据配置是否,打印sql
 	 * @param sql
 	 * @param showSql
 	 */
 	public void printSql(String sql){
 		if (daoConfResource.isShowSql()){
-			if (lastSql.equals(sql)) {
-				System.out.println("CommonDao: 同上same with last sql ↑ ");
-			} else {
-				System.out.println("CommonDao: ".concat(sql));
-				lastSql=sql;
-			}	
+			System.out.println("CommonDao: ".concat(sql));
 			//日志输出
 		}
 	}

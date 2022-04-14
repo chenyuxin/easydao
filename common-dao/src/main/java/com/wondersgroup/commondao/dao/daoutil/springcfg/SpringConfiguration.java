@@ -17,12 +17,15 @@ import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
+import org.springframework.jdbc.datasource.DataSourceTransactionManager;
 import org.springframework.stereotype.Controller;
+import org.springframework.transaction.TransactionManager;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 
 import com.alibaba.druid.spring.boot.autoconfigure.DruidDataSourceAutoConfigure;
+import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
 
 import org.springframework.context.annotation.ComponentScan.Filter;
 
@@ -48,6 +51,19 @@ public class SpringConfiguration {
 	@Bean("NamedParameterJdbcTemplate")
 	public static NamedParameterJdbcTemplate jdbcTemplate(DataSource dataSource){
 		return new NamedParameterJdbcTemplate(dataSource);
+	}
+	
+	/**
+	 * 对默认数据源创建事务管理器
+	 * @param dataSource
+	 * @return
+	 */
+	//@Bean("dataSourceTransactionManager")
+	@Bean(DaoUtil.defaultDataSourceName + DaoUtil.TransactionManager)
+	public static TransactionManager transactionManager(DataSource dataSource) {
+		DataSourceTransactionManager dataSourceTransactionManager = new DataSourceTransactionManager();
+        dataSourceTransactionManager.setDataSource(dataSource); // 设置数据源
+        return dataSourceTransactionManager;
 	}
 	
 	/**

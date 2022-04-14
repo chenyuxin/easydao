@@ -218,8 +218,7 @@ public class CommonSql {
 	 */
 	public static String saveOrUpdateSql(Map<String, Object> paramMap, String tableName, DataBaseType dataBaseType, String... fieldNameByIds) {
 		StringBuffer sBuffer = new StringBuffer();
-		if (DataBaseType.MYSQL.equals(dataBaseType)){
-			//必须mysql数据库建立主键 
+		if (DataBaseType.MYSQL.equals(dataBaseType)){//必须mysql数据库建立主键 
 			//insert into test (TEST_ID, TEST_NAME) values ('223','insert') ON DUPLICATE KEY UPDATE TEST_NAME = 'update';
 			sBuffer.append(" insert into ").append(tableName).append(" ( ");
 			Iterator<Map.Entry<String, Object>> eIn = paramMap.entrySet().iterator();
@@ -262,7 +261,7 @@ public class CommonSql {
 				}
 			}
 			
-		} else if (DataBaseType.ORACLE.equals(dataBaseType) || DataBaseType.POSTGREPSQL.equals(dataBaseType)) {
+		} else if (DataBaseType.ORACLE.equals(dataBaseType)) {
 			sBuffer.append(" merge into ").append(tableName).append(" t1 using ( select ");
 			Iterator<Map.Entry<String, Object>> e = paramMap.entrySet().iterator();
 			while (e.hasNext()) {
@@ -331,7 +330,65 @@ public class CommonSql {
 				}
 			}
 			sBuffer.append(" ) ");
-		} 
+		} else if (DataBaseType.POSTGREPSQL.equals(dataBaseType)) {//必须POSTGREPSQL数据库建立主键或唯一索引
+			//insert into test1 (name,id) values ('测试name','XN_JZtcKHmJWHSxZVeQrsg') on conflict (id) do update set name='测试name',id='XN-JZtcKHmJWHSxZVeQrsg';
+			sBuffer.append(" insert into ").append(tableName).append(" ( ");
+			Iterator<Map.Entry<String, Object>> eIn = paramMap.entrySet().iterator();
+			while (eIn.hasNext()) {
+				Map.Entry<String, Object> param = eIn.next();
+				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) );
+				if (eIn.hasNext()) {
+					sBuffer.append(",");
+				}
+			}
+			sBuffer.append(" ) values ( :");
+			Iterator<Map.Entry<String, Object>> eValues = paramMap.entrySet().iterator();
+			while (eValues.hasNext()) {
+				Map.Entry<String, Object> param = eValues.next();
+				sBuffer.append(param.getKey());
+				if (eValues.hasNext()) {
+					sBuffer.append(", :");
+				}
+			}
+			sBuffer.append(" ) on conflict ( ");
+			for (int i = 0; i < fieldNameByIds.length; i++) {
+				sBuffer.append(fieldNameByIds[i]);
+				if (i < fieldNameByIds.length-1) {
+					sBuffer.append(",");
+				}
+			}
+			sBuffer.append(")");
+			if (paramMap.size() == fieldNameByIds.length ){
+				sBuffer.append(" do nothing ");//主键字段就是全部字段的情况，就什么都不做
+			} else {
+				sBuffer.append(" do update set ");
+				Iterator<Map.Entry<String, Object>> eSet = paramMap.entrySet().iterator();
+				a:
+				while (eSet.hasNext()) {
+					Map.Entry<String, Object> param = eSet.next();
+					for (int i = 0; i < fieldNameByIds.length; i++) {
+						if (param.getKey().equals(fieldNameByIds[i])) {
+							if (!eSet.hasNext()) {
+								//删除 在while循环的最后添加的"," 
+								sBuffer.deleteCharAt(sBuffer.lastIndexOf(","));
+							}
+							continue a;
+						}
+					}
+					
+					
+					sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) );
+					sBuffer.append(" = :").append(param.getKey());
+					if (eSet.hasNext()) {
+						sBuffer.append(",");
+					}
+				}
+				
+			}
+			
+			
+			
+		}
 		return sBuffer.toString();
 	}
 	

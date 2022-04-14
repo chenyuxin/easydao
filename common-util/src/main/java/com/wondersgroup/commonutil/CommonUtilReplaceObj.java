@@ -222,7 +222,7 @@ public class CommonUtilReplaceObj {
 	 * @param obj2  模板对象
 	 */
 	public static void replaceAllProperty( Object obj1, Object obj2 ) {
-		replaceExcludesProperty(obj1, obj2, new String[0]);
+		replaceExcludesProperty(obj1, obj2, StringPool.BLANK);
 	}
 
 	/**

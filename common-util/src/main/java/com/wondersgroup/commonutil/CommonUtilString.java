@@ -76,6 +76,18 @@ public class CommonUtilString {
 		return repString.substring(begingIndex, endIndex);
 	}
 	
+	/**
+	 * 截取字符串，开始游标和结束游标，结束大了不报错
+	 * @param rep 源字符串
+	 * @param begin 开始
+	 * @param end 结束
+	 * @return
+	 */
+	public static String subString(Object rep, int begin, int end) {
+		String repStr = String.valueOf(rep);
+		return repStr.substring(begin, end>repStr.length()?repStr.length():end);
+	}
+	
 	
 	
 	/**
@@ -215,7 +227,7 @@ public class CommonUtilString {
 		}
 		return  new ArrayList<String>(attributeNames);
 	}
-	
+
 	
 
 }
