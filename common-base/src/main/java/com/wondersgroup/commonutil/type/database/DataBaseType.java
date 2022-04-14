@@ -3,6 +3,7 @@ package com.wondersgroup.commonutil.type.database;
 import java.util.Map;
 
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.CommonType;
 
 /**
@@ -12,13 +13,13 @@ public enum DataBaseType implements CommonType {
 	ORACLE {
 		@Override
 		public String getJdbcDriverClassName() {
-			return DaoUtil.OracleJdbcDriverClassName;
+			return DaoUtil.OracleJdbcDriverClassName1;
 		}
 
 		@Override
 		public String getJdbcUrl(String ip, int port, String instanceName) {
 			StringBuffer jdbcUrl = new StringBuffer("jdbc:oracle:thin:@");
-			jdbcUrl.append(ip).append(":").append(port).append("/").append(instanceName);
+			jdbcUrl.append(ip).append(StringPool.COLON).append(port).append(StringPool.FORWARD_SLASH).append(instanceName);
 			return jdbcUrl.toString();
 		}
 	},
@@ -26,13 +27,13 @@ public enum DataBaseType implements CommonType {
 	MYSQL {
 		@Override
 		public String getJdbcDriverClassName() {
-			return DaoUtil.MysqlJdbcDriverClassName;
+			return DaoUtil.MysqlJdbcDriverClassName1;
 		}
 		
 		@Override
 		public String getJdbcUrl(String ip, int port, String instanceName) {
 			StringBuffer jdbcUrl = new StringBuffer("jdbc:mysql://");
-			jdbcUrl.append(ip).append(":").append("/").append(instanceName);
+			jdbcUrl.append(ip).append(StringPool.COLON).append(port).append(StringPool.FORWARD_SLASH).append(instanceName);
 			jdbcUrl.append("?useUnicode=true&characterEncoding=utf-8&serverTimezone=GMT%2B8");
 			return jdbcUrl.toString();
 		}
@@ -41,13 +42,13 @@ public enum DataBaseType implements CommonType {
 	POSTGREPSQL {
 		@Override
 		public String getJdbcDriverClassName() {
-			return DaoUtil.PostgreJdbcDriverClassName;
+			return DaoUtil.PostgreJdbcDriverClassName1;
 		}
 		
 		@Override
 		public String getJdbcUrl(String ip, int port, String instanceName) {
 			StringBuffer jdbcUrl = new StringBuffer("jdbc:postgresql://");
-			jdbcUrl.append(ip).append(":").append("/").append(instanceName);
+			jdbcUrl.append(ip).append(StringPool.COLON).append(port).append(StringPool.FORWARD_SLASH).append(instanceName);
 			return jdbcUrl.toString();
 		}
 	},

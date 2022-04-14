@@ -19,5 +19,4 @@ public interface IdCodeConst {
 	 */
 	String hex_digits = "0123456789ABCDEF";
 	
-	
 }

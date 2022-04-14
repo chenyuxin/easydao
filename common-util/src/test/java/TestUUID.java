@@ -8,6 +8,7 @@ import org.junit.jupiter.api.Test;
 import com.wondersgroup.commonutil.CommonUtilUUID;
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
 import com.wondersgroup.commonutil.baseutil.CharsetUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 
 
 public class TestUUID {
@@ -155,7 +156,7 @@ public class TestUUID {
 //		String b = BaseUtil.getUUIDC64("中国@Ab123");
 //		System.out.println(b);//iqH8YC7JeUWmGvxIlzwfYM
 		UUID uuid = UUID.randomUUID();
-		System.out.println(uuid.toString().replace("-", ""));
+		System.out.println(uuid.toString().replace(StringPool.MINUS, StringPool.BLANK));
 		
 		String a = BaseUtil.toStringUUID(uuid);
 		System.out.println(a);

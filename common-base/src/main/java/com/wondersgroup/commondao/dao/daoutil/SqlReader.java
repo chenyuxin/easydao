@@ -7,6 +7,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * 解析sql，获取sql语句的表名
  * (未完全验证所有可执行sql)
@@ -68,7 +70,7 @@ public class SqlReader {
 			}
 		}
 		
-		if(!"".equals(beforKeyName) && null != beforKeyName) {
+		if(!StringPool.BLANK.equals(beforKeyName) && null != beforKeyName) {
 			sql = sql.substring(beforKeyNameIndex + beforKeyName.length());
 			
 			int SplitKeyNameIndex = -1;
@@ -87,10 +89,10 @@ public class SqlReader {
 					   
 				}
 			}
-			if (!"".equals(sql.trim()) && null != sql ) {
-				if (!"".equals(SplitKeyName) && null != SplitKeyName) {
+			if (!StringPool.BLANK.equals(sql.trim()) && null != sql ) {
+				if (!StringPool.BLANK.equals(SplitKeyName) && null != SplitKeyName) {
 					String tableName = sql.substring(0,SplitKeyNameIndex);
-					if (!"".equals(tableName.trim())) {
+					if (!StringPool.BLANK.equals(tableName.trim())) {
 						temp.add(tableName);
 					}
 					sql = sql.substring(SplitKeyNameIndex + SplitKeyName.length());
@@ -166,10 +168,10 @@ public class SqlReader {
      * @return
      */
     private static String trimLeft(String str) {
-        if (str == null || str.equals("")) {
+        if (str == null || StringPool.BLANK.equals(str) ) {
             return str;
         } else {
-            return str.replaceAll("^[　 ]+", "");
+            return str.replaceAll("^[　 ]+", StringPool.BLANK);
         }
     }
     
@@ -239,7 +241,7 @@ public class SqlReader {
         StringBuffer sb = new StringBuffer();
         Matcher m = pattern.matcher(sql);
         while (m.find()) {
-            m.appendReplacement(sb, "");
+            m.appendReplacement(sb, StringPool.BLANK);
         }
         m.appendTail(sb);
         return sb.toString();

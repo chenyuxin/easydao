@@ -4,6 +4,7 @@ import java.util.UUID;
 
 import com.wondersgroup.commonutil.constant.IdCodeConst;
 import com.wondersgroup.commonutil.constant.RegexConst;
+import com.wondersgroup.commonutil.constant.StringPool;
 
 /**
  * 基本的工具类，供内部程序包使用<br>
@@ -20,7 +21,7 @@ public class BaseUtil {
 	 * @throws Exception
 	 */
 	public static String setNullString(String string, String isNotNullString) {
-		if (null == string || "".equals(string) ) {
+		if (null == string || StringPool.BLANK.equals(string) ) {
 			string = isNotNullString;
 		}
 		return string;

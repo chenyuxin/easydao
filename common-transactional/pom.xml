@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <modelVersion>4.0.0</modelVersion>
+  <parent>
+    <groupId>com.wondersgroup.common</groupId>
+    <artifactId>common-framework</artifactId>
+    <version>2.1</version>
+    <relativePath>../pom.xml</relativePath>
+  </parent>
+  <artifactId>common-transactional</artifactId>
+  <name>common-transactionnal</name>
+  <description>基于springAop自定义扩展工具包(多数据源注入ioc，及多数据源事务同步管理)</description>
+  
+  <dependencies>
+  <!-- 
+  -->
+  	<dependency>
+		<groupId>com.wondersgroup.common</groupId>
+		<artifactId>common-spring-aop</artifactId>
+		<version>${common-framework.version}</version>
+	</dependency>
+  
+  	<dependency>
+		<groupId>com.wondersgroup.common</groupId>
+		<artifactId>common-base</artifactId>
+		<version>${common-framework.version}</version>
+	</dependency>
+	
+	<!-- 用druid-spring-boot让commonDao同时支持  xml配置连接池或者application配置boot -->
+	<dependency>
+	    <groupId>com.alibaba</groupId>
+	    <artifactId>druid</artifactId>
+	    <version>${druid.version}</version>
+	    <exclusions>
+	    	<exclusion>
+	    		<groupId>org.slf4j</groupId>
+	    		<artifactId>slf4j-api</artifactId>
+	    	</exclusion>
+	    </exclusions>
+	</dependency>
+	
+	
+  </dependencies>
+  
+  		
+  
+</project>

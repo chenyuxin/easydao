@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 /**
  * 本包中annotation的工具
  * TableUtil工具
@@ -28,7 +30,7 @@ public class TableUtil {
 				
 				Column column = field.getAnnotation(Column.class);
 				if (null != column){
-					if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+					if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 						continue;
 					} else {
 						name = column.name().toLowerCase();
@@ -67,7 +69,7 @@ public class TableUtil {
 				String name = new String(field.getName());
 				Column column = field.getAnnotation(Column.class);
 				if (null != column){
-					if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+					if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 						continue;//不使用此字段也就这个id主键也不使用
 					} else {
 						name = column.name().toLowerCase();

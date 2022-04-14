@@ -2,6 +2,8 @@ package com.wondersgroup.core.utils;
 
 import org.apache.commons.lang3.StringUtils;
 
+import com.wondersgroup.commonutil.constant.StringPool;
+
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.ParsePosition;
@@ -155,7 +157,7 @@ public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
 			else
 				return String.valueOf(formatter.getCalendar().get(part));
 		} catch (Exception ex) {
-			return "";
+			return StringPool.BLANK;
 		}
 	}
 
@@ -243,9 +245,9 @@ public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
 	 * 取本月月初日期
 	 */
 	public static String getCurrentMonthFirstDay() {
-		String beginMonth = "";
+		String beginMonth = StringPool.BLANK;
 		Calendar calendar = Calendar.getInstance();
-		String startMonth = "" + (calendar.get(Calendar.MONTH));
+		String startMonth = StringPool.BLANK + (calendar.get(Calendar.MONTH));
 		if ("12".equals(startMonth)) {
 			calendar.add(Calendar.YEAR, 1);
 			beginMonth = calendar.get(java.util.Calendar.YEAR) + "-" + "01";
@@ -253,7 +255,7 @@ public class DateUtil extends org.apache.commons.lang3.time.DateUtils{
 			beginMonth = calendar.get(java.util.Calendar.YEAR) + "-" + "12";
 		} else {
 			calendar.add(Calendar.MONTH, 1);
-			String startMonth1 = "" + (calendar.get(java.util.Calendar.MONTH));
+			String startMonth1 = StringPool.BLANK + (calendar.get(java.util.Calendar.MONTH));
 			beginMonth = calendar.get(java.util.Calendar.YEAR) + "-" + startMonth1;
 			if (startMonth1.length() == 1) {
 				startMonth1 = "0" + startMonth1;

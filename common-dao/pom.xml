@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<project xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd" xmlns="http://maven.apache.org/POM/4.0.0"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
 	<groupId>com.wondersgroup.common</groupId>
 	<artifactId>common-framework</artifactId>
-	<version>2.0</version>
+	<version>2.1</version>
 	<relativePath>../pom.xml</relativePath>
   </parent>
 	
@@ -18,19 +18,20 @@
   
   <description>DAO工程，动态查询数据库，处理与数据库交互。</description>
   
-  <properties>
-	<druid.version>1.2.8</druid.version>
-	
-  </properties>
-  
   <dependencies>
   	<dependency>
 		<groupId>com.wondersgroup.common</groupId>
 		<artifactId>common-base</artifactId>
 		<version>${common-framework.version}</version>
 	</dependency>
+	
+	
   
 	<!-- 用druid-spring-boot让commonDao同时支持  xml配置连接池或者application配置boot -->
+	<dependency>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-autoconfigure</artifactId>
+	</dependency>
 	<dependency>
 	    <groupId>com.alibaba</groupId>
 	    <artifactId>druid-spring-boot-starter</artifactId>
@@ -47,17 +48,14 @@
 	<dependency>
 	    <groupId>com.oracle.database.jdbc</groupId>
 	    <artifactId>ojdbc8</artifactId>
-	    <version>21.3.0.0</version>
 	</dependency>
 	<dependency>
     	<groupId>mysql</groupId>
 	    <artifactId>mysql-connector-java</artifactId>
-	    <version>8.0.28</version>
 	</dependency>
 	<dependency>
 		<groupId>org.postgresql</groupId>
 		<artifactId>postgresql</artifactId>
-		<version>42.3.3</version>
 	</dependency>
   
   </dependencies>

@@ -147,15 +147,35 @@ public class MyObj {
 	 * @throws IllegalArgumentException 
 	 * @throws IllegalAccessException 
 	 */
-	@SuppressWarnings({ "rawtypes", "unchecked" })
 	public static Object invokeMethod(Object obj, String methodName, Object... args) throws Exception {
-		
-		Class[] parameterTypes = new Class[args.length];
+		Class<?>[] parameterTypes = new Class[args.length];
 		for (int i = 0; i < args.length; i++) {
-            parameterTypes[i] = args[i].getClass();
+			if (null == args[i]) {
+				throw new RuntimeException("参数中有null值,无法确定传参类型,尝试传入参数类型的执行方法， parameterType has null, no method can be invoke");
+			} else {
+				parameterTypes[i] = args[i].getClass();
+			}
         }
-		
-		Class clazz = obj.getClass();
+		return invokeMethod(obj,methodName,parameterTypes, args);
+	}
+	
+	
+	/**
+	 * 执行某个对象的方法
+	 * @param obj 执行对象
+	 * @param methodName 执行对象的方法名
+	 * @param parameterTypes 参数类型
+	 * @param args 执行方法的参数
+	 * @return
+	 * @throws Exception
+	 */
+	public static Object invokeMethod(Object obj, String methodName, Class<?>[] parameterTypes, Object... args) throws Exception {
+		Class<?> clazz;
+		if (obj instanceof Class) {
+			clazz = (Class<?>) obj;
+		} else {
+			clazz = obj.getClass();
+		}
 		Method m = null;//循环获取到对应方法名的方法，无则获取父类方法。
 		for (; clazz != Object.class && m == null; clazz = clazz.getSuperclass()) {
 			try {

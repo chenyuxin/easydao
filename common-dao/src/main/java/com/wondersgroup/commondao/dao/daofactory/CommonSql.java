@@ -15,6 +15,7 @@ import com.wondersgroup.commondao.dao.daoutil.anotation.Column;
 import com.wondersgroup.commondao.dao.daoutil.anotation.Table;
 import com.wondersgroup.commondao.dao.daoutil.sqlreader.DaoSqlReader;
 import com.wondersgroup.commondao.dao.daoutil.toolentity.JoinOptions;
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.database.DataBaseType;
 import com.wondersgroup.commonutil.type.database.TableType;
 
@@ -37,7 +38,7 @@ public class CommonSql {
 			String colName = DaoUtil.camelToUnderline(field.getName());
 			Column column = field.getAnnotation(Column.class);
 			if (null != column){
-				if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+				if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 					continue;
 				} else {
 					if ("select".equals(dbType)) {
@@ -79,7 +80,7 @@ public class CommonSql {
 			String name = new String(field.getName());
 			Column column = field.getAnnotation(Column.class);
 			if (null != column){
-				if ("".equals(column.name())){//若字段名为""，则在数据库中不使用该字段
+				if (StringPool.BLANK.equals(column.name())){//若字段名为""，则在数据库中不使用该字段
 					continue;
 				} else {
 					name = column.name().toLowerCase();
@@ -186,7 +187,7 @@ public class CommonSql {
 		boolean whereFlag = true;
 		for (int i = 0; i < fieldNameByIds.length; i++) {
 			String fieldNameById = fieldNameByIds[i];
-			if (null != fieldNameById && !"".equals(fieldNameById)) {
+			if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 				if(whereFlag){
 					sBuffer.append(" where ").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = :").append(fieldNameById);
 					whereFlag = false;
@@ -199,7 +200,7 @@ public class CommonSql {
 			
 		String sql = sBuffer.toString();
 		if ( !sql.contains("where")) {
-			return "";//没有筛选条件，fieldNameById的值不合适
+			return StringPool.BLANK;//没有筛选条件，fieldNameById的值不合适
 		}
 		
 		return  sql;
@@ -217,8 +218,7 @@ public class CommonSql {
 	 */
 	public static String saveOrUpdateSql(Map<String, Object> paramMap, String tableName, DataBaseType dataBaseType, String... fieldNameByIds) {
 		StringBuffer sBuffer = new StringBuffer();
-		if (DataBaseType.MYSQL.equals(dataBaseType)){
-			//必须mysql数据库建立主键 
+		if (DataBaseType.MYSQL.equals(dataBaseType)){//必须mysql数据库建立主键 
 			//insert into test (TEST_ID, TEST_NAME) values ('223','insert') ON DUPLICATE KEY UPDATE TEST_NAME = 'update';
 			sBuffer.append(" insert into ").append(tableName).append(" ( ");
 			Iterator<Map.Entry<String, Object>> eIn = paramMap.entrySet().iterator();
@@ -261,14 +261,14 @@ public class CommonSql {
 				}
 			}
 			
-		} else if (DataBaseType.ORACLE.equals(dataBaseType) || DataBaseType.POSTGREPSQL.equals(dataBaseType)) {
+		} else if (DataBaseType.ORACLE.equals(dataBaseType)) {
 			sBuffer.append(" merge into ").append(tableName).append(" t1 using ( select ");
 			Iterator<Map.Entry<String, Object>> e = paramMap.entrySet().iterator();
 			while (e.hasNext()) {
 				Map.Entry<String, Object> param = e.next();
 				sBuffer.append(" :").append(param.getKey());
 				sBuffer.append(" AS \"");
-				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) ).append("\"");
+				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) ).append(StringPool.QUOTE);
 				if (e.hasNext()) {
 					sBuffer.append(",");
 				}
@@ -276,9 +276,9 @@ public class CommonSql {
 			sBuffer.append(" from dual ) t2 on ( ");
 			for (int i = 0; i < fieldNameByIds.length; i++) {
 				String fieldNameById = fieldNameByIds[i];
-				if (null != fieldNameById && !"".equals(fieldNameById)) {
+				if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 					sBuffer.append(" t1.").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = t2.").append(DaoUtil.camelToUnderline(fieldNameById));
-					if ( i != fieldNameByIds.length -1 && null != fieldNameByIds[i+1] && !"".equals(fieldNameByIds[i+1]) ) {
+					if ( i != fieldNameByIds.length -1 && null != fieldNameByIds[i+1] && !StringPool.BLANK.equals(fieldNameByIds[i+1]) ) {
 						sBuffer.append(" and ");
 					}
 				
@@ -330,7 +330,65 @@ public class CommonSql {
 				}
 			}
 			sBuffer.append(" ) ");
-		} 
+		} else if (DataBaseType.POSTGREPSQL.equals(dataBaseType)) {//必须POSTGREPSQL数据库建立主键或唯一索引
+			//insert into test1 (name,id) values ('测试name','XN_JZtcKHmJWHSxZVeQrsg') on conflict (id) do update set name='测试name',id='XN-JZtcKHmJWHSxZVeQrsg';
+			sBuffer.append(" insert into ").append(tableName).append(" ( ");
+			Iterator<Map.Entry<String, Object>> eIn = paramMap.entrySet().iterator();
+			while (eIn.hasNext()) {
+				Map.Entry<String, Object> param = eIn.next();
+				sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) );
+				if (eIn.hasNext()) {
+					sBuffer.append(",");
+				}
+			}
+			sBuffer.append(" ) values ( :");
+			Iterator<Map.Entry<String, Object>> eValues = paramMap.entrySet().iterator();
+			while (eValues.hasNext()) {
+				Map.Entry<String, Object> param = eValues.next();
+				sBuffer.append(param.getKey());
+				if (eValues.hasNext()) {
+					sBuffer.append(", :");
+				}
+			}
+			sBuffer.append(" ) on conflict ( ");
+			for (int i = 0; i < fieldNameByIds.length; i++) {
+				sBuffer.append(fieldNameByIds[i]);
+				if (i < fieldNameByIds.length-1) {
+					sBuffer.append(",");
+				}
+			}
+			sBuffer.append(")");
+			if (paramMap.size() == fieldNameByIds.length ){
+				sBuffer.append(" do nothing ");//主键字段就是全部字段的情况，就什么都不做
+			} else {
+				sBuffer.append(" do update set ");
+				Iterator<Map.Entry<String, Object>> eSet = paramMap.entrySet().iterator();
+				a:
+				while (eSet.hasNext()) {
+					Map.Entry<String, Object> param = eSet.next();
+					for (int i = 0; i < fieldNameByIds.length; i++) {
+						if (param.getKey().equals(fieldNameByIds[i])) {
+							if (!eSet.hasNext()) {
+								//删除 在while循环的最后添加的"," 
+								sBuffer.deleteCharAt(sBuffer.lastIndexOf(","));
+							}
+							continue a;
+						}
+					}
+					
+					
+					sBuffer.append(DaoUtil.camelToUnderline(param.getKey()) );
+					sBuffer.append(" = :").append(param.getKey());
+					if (eSet.hasNext()) {
+						sBuffer.append(",");
+					}
+				}
+				
+			}
+			
+			
+			
+		}
 		return sBuffer.toString();
 	}
 	
@@ -346,7 +404,7 @@ public class CommonSql {
 		boolean whereFlag = true;
 		for (int i = 0; i < fieldNameByIds.length; i++) {
 			String fieldNameById = fieldNameByIds[i];
-			if (null != fieldNameById && !"".equals(fieldNameById)) {
+			if (null != fieldNameById && !StringPool.BLANK.equals(fieldNameById)) {
 				if(whereFlag){
 					sBuffer.append(" where ").append(DaoUtil.camelToUnderline(fieldNameById)).append(" = :").append(fieldNameById);
 					whereFlag = false;
@@ -359,7 +417,7 @@ public class CommonSql {
 			
 		String sql = sBuffer.toString();
 		if ( !sql.contains("where")) {
-			return "";//没有筛选条件，fieldNameById的值不合适
+			return StringPool.BLANK;//没有筛选条件，fieldNameById的值不合适
 		}
 		
 		return sql;
@@ -679,8 +737,8 @@ public class CommonSql {
 				if (fieldName.contains(" as ")){
 					int beginIndex = fieldName.lastIndexOf(" as ")+4;
 					fieldName = fieldName.substring(beginIndex);
-					if(fieldName.contains("\"")){
-						fieldName.replaceAll("\"", "");
+					if(fieldName.contains(StringPool.QUOTE)){
+						fieldName.replaceAll(StringPool.QUOTE, StringPool.BLANK);
 					}
 				}
 				sBuffer.append(fieldName);

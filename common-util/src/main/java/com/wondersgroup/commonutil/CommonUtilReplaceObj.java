@@ -5,6 +5,7 @@ import java.util.Map;
 
 import com.wondersgroup.commondao.dao.daoutil.DaoUtil;
 import com.wondersgroup.commonutil.baseutil.BaseUtil;
+import com.wondersgroup.commonutil.constant.StringPool;
 
 
 /**
@@ -46,7 +47,7 @@ public class CommonUtilReplaceObj {
 				field2.setAccessible(true);
 				
 				if ( field.getType() == String.class ){
-					if ( null == field.get(obj1) || "".equals((String)field.get(obj1)) ){
+					if ( null == field.get(obj1) || StringPool.BLANK.equals((String)field.get(obj1)) ){
 						field.set(obj1, field2.get(obj2));
 					}
 				} else {
@@ -87,7 +88,7 @@ public class CommonUtilReplaceObj {
 				field2.setAccessible(true);
 				
 				if ( field.getType() == String.class ){
-					if (null != field2.get(obj2) && !"".equals((String)field2.get(obj2))){
+					if (null != field2.get(obj2) && !StringPool.BLANK.equals((String)field2.get(obj2))){
 						field.set(obj1, field2.get(obj2));
 					}
 				} else {
@@ -134,7 +135,7 @@ public class CommonUtilReplaceObj {
 				field2.setAccessible(true);
 				
 				if ( field.getType() == String.class ){
-					if (null != field2.get(obj2) && !"".equals((String)field2.get(obj2))){
+					if (null != field2.get(obj2) && !StringPool.BLANK.equals((String)field2.get(obj2))){
 						field.set(obj1, field2.get(obj2));
 					}
 				} else {
@@ -221,7 +222,7 @@ public class CommonUtilReplaceObj {
 	 * @param obj2  模板对象
 	 */
 	public static void replaceAllProperty( Object obj1, Object obj2 ) {
-		replaceExcludesProperty(obj1, obj2, new String[0]);
+		replaceExcludesProperty(obj1, obj2, StringPool.BLANK);
 	}
 
 	/**
