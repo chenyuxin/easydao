@@ -58,6 +58,8 @@ public class MultipleManagerAsyncTransaction implements CommonAopDoSomeThing<Tot
 
 	@Override
 	public void throwable(ProceedingJoinPoint point, CommonAop commonAop, TotalTransactionManager ttm, Throwable e) {
+		log.error(e.getMessage());
+		//e.printStackTrace();
 		ttm.rollback();//全部回滚
 	}
 	

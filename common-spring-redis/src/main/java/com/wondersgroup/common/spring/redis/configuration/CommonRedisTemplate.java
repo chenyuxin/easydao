@@ -1,11 +1,5 @@
 package com.wondersgroup.common.spring.redis.configuration;
 
-import java.util.Date;
-import java.text.SimpleDateFormat;
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
-import java.time.format.DateTimeFormatter;
 
 import org.springframework.data.redis.connection.DefaultStringRedisConnection;
 import org.springframework.data.redis.connection.RedisConnection;
@@ -13,24 +7,53 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import com.alibaba.fastjson.parser.Feature;
-import com.alibaba.fastjson.serializer.SerializeConfig;
-import com.alibaba.fastjson.serializer.SerializeWriter;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.support.config.FastJsonConfig;
-import com.alibaba.fastjson.support.spring.FastJsonRedisSerializer;
+import com.wondersgroup.common.spring.redis.util.MyFastJsonRedisSerializer;
 
 
 public class CommonRedisTemplate extends RedisTemplate<String, Object> {
 	
+	//private static GenericFastJsonRedisSerializer genericFastJsonRedisSerializer = new GenericFastJsonRedisSerializer();
+	private static MyFastJsonRedisSerializer myFastJsonRedisSerializer = new MyFastJsonRedisSerializer();
+	
+	/**
+	 * Constructs a new <code>StringRedisTemplate</code> instance. {@link #setConnectionFactory(RedisConnectionFactory)}
+	 * and {@link #afterPropertiesSet()} still need to be called.
+	 */
+	public CommonRedisTemplate() {
+		setKeySerializer(RedisSerializer.string());
+		setValueSerializer(myFastJsonRedisSerializer);
+		setHashKeySerializer(RedisSerializer.string());
+        setHashValueSerializer(myFastJsonRedisSerializer);
+	}
+
+	/**
+	 * Constructs a new <code>StringRedisTemplate</code> instance ready to be used.
+	 *
+	 * @param connectionFactory connection factory for creating new connections
+	 */
+	public CommonRedisTemplate(RedisConnectionFactory connectionFactory) {
+		this();
+		setConnectionFactory(connectionFactory);
+		afterPropertiesSet();
+	}
+
+	protected RedisConnection preProcessConnection(RedisConnection connection, boolean existingConnection) {
+		return new DefaultStringRedisConnection(connection);
+	}
+
+}
+
+
+
+/**
+
 	@SuppressWarnings({ "rawtypes", "unchecked" })
 	private static FastJsonRedisSerializer fastJsonRedisSerializer = new FastJsonRedisSerializer(Object.class);
 	static {
 		FastJsonConfig  fastJsonConfig  = fastJsonRedisSerializer.getFastJsonConfig();
 		fastJsonConfig.setSerializerFeatures(SerializerFeature.WriteMapNullValue,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteDateUseDateFormat);
-	
 		SerializeConfig serializeConfig = fastJsonConfig.getSerializeConfig();
-        //加入的locadatetime序列化，也可以不加（但是要用@JSONField(format = "yyyy-MM-dd HH:mm:ss")）格式化
+		//加入的locadatetime序列化，也可以不加（但是要用@JSONField(format = "yyyy-MM-dd HH:mm:ss")）格式化
         serializeConfig.put(LocalDateTime.class, (serializer, object, fieldName, fieldType, features) -> {
             SerializeWriter out = serializer.out;
             if (object == null) {
@@ -68,31 +91,5 @@ public class CommonRedisTemplate extends RedisTemplate<String, Object> {
         fastJsonConfig.setFeatures(Feature.SupportAutoType);
 	
 	}
-	
-	/**
-	 * Constructs a new <code>StringRedisTemplate</code> instance. {@link #setConnectionFactory(RedisConnectionFactory)}
-	 * and {@link #afterPropertiesSet()} still need to be called.
-	 */
-	public CommonRedisTemplate() {
-		setKeySerializer(RedisSerializer.string());
-		setValueSerializer(fastJsonRedisSerializer);
-		setHashKeySerializer(RedisSerializer.string());
-        setHashValueSerializer(fastJsonRedisSerializer);
-	}
 
-	/**
-	 * Constructs a new <code>StringRedisTemplate</code> instance ready to be used.
-	 *
-	 * @param connectionFactory connection factory for creating new connections
-	 */
-	public CommonRedisTemplate(RedisConnectionFactory connectionFactory) {
-		this();
-		setConnectionFactory(connectionFactory);
-		afterPropertiesSet();
-	}
-
-	protected RedisConnection preProcessConnection(RedisConnection connection, boolean existingConnection) {
-		return new DefaultStringRedisConnection(connection);
-	}
-
-}
+*/
