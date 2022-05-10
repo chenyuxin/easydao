@@ -4,6 +4,7 @@ import java.util.Map;
 
 import javax.annotation.Nonnull;
 
+import com.wondersgroup.commonutil.constant.StringPool;
 import com.wondersgroup.commonutil.type.database.FieldType;
 
 /**
@@ -65,6 +66,15 @@ public class CommonUtilMap {
 		}
 	}
 	
-	
+	/**
+	 * 获取map里的stingValue,为null时或获取时异常则默认值为StringPool.BLANK
+	 * @param <K>
+	 * @param key 获取值的key
+	 * @param map 获取值的map
+	 * @return
+	 */
+	public static <K> String getStringOfMap(K key,Map<K, ?> map) {
+		return getValueOfMap(StringPool.BLANK,key,map);
+	}
 
 }

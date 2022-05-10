@@ -59,8 +59,14 @@ public class CommonUtilString {
         }
 	}
     
-
-    
+    /**
+     * 字符串对象转为String型
+     * @param object
+     * @return
+     */
+    public static String parseString(Object object) {
+    	return (null == object) ? null : object.toString();
+    }
     
     
 	/**

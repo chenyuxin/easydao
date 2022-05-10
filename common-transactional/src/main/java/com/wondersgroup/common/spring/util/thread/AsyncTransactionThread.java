@@ -1,7 +1,9 @@
 package com.wondersgroup.common.spring.util.thread;
 
 import java.util.Queue;
+import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Supplier;
 
 import org.springframework.jdbc.datasource.DataSourceTransactionManager;
@@ -56,7 +58,7 @@ public class AsyncTransactionThread extends Thread {
 	/**
 	 * 本线程执行任务队列
 	 */
-	private final Queue<Supplier<?>> executeQueue = new LinkedBlockingDeque<Supplier<?>>();
+	private final BlockingQueue<Supplier<?>> executeQueue = new LinkedBlockingDeque<Supplier<?>>();
 	
 	/**
 	 * 错误消息<br>
@@ -187,14 +189,19 @@ public class AsyncTransactionThread extends Thread {
 	    TransactionStatus transactionStatus = this.transactionManager.getTransaction(transDef); // 获得事务状态
 		
 		while (true){
-			Supplier<?> executeSomeThing = this.executeQueue.poll();
+			Supplier<?> executeSomeThing = null;
+			try {
+				executeSomeThing = this.executeQueue.poll(this.lastEndTransactionTime - System.currentTimeMillis(), TimeUnit.MILLISECONDS);
+			} catch (InterruptedException e1) {
+				log.error(e1.getMessage());
+				this.errorMessage = e1.getMessage();
+				if (transactionStatus.isCompleted()) return;
+				this.transactionManager.rollback(transactionStatus);
+				return;//结束本线程事务
+			}
 			if (null == executeSomeThing) {
-				
-				if( this.lastEndTransactionTime < System.currentTimeMillis() ) {//检测事务超时
-					this.transactionManager.rollback(transactionStatus);
-					return;//结束本线程事务
-				}
-				
+				this.transactionManager.rollback(transactionStatus);//事务超时回滚结束事务
+				return;//结束本线程事务
 			} else if (executeSomeThing instanceof Supplier) {
 				Object r = StringPool.BLANK;
 				try {
@@ -224,10 +231,7 @@ public class AsyncTransactionThread extends Thread {
 				
 			}
 			
-			try {
-				Thread.sleep(0);//等一等，睡一睡，生活更健康
-			} catch (Exception e) {
-			}
+			Thread.yield();//等一等，睡一睡，生活更健康
 			
 		}
 		

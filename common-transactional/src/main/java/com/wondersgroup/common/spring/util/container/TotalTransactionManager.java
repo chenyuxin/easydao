@@ -110,11 +110,11 @@ public class TotalTransactionManager {
 	private Boolean startTransaction = false;//只开启一次总事务
 	
 	public void commit() {
-		//log.debug("总事事务提交");
+		//log.debug("-------------总事务提交---------------");
 		if (this.readOnly) {
 			this.rollback();
 		} else {
-			this.transactionThreadsMap.values().stream().parallel().forEach(
+			this.transactionThreadsMap.values().parallelStream().forEach(
 				asyncTransactionThread -> {
 					asyncTransactionThread.offer( ()-> {return StringMeanPool.COMMIT;} );	
 					try {
@@ -129,7 +129,8 @@ public class TotalTransactionManager {
 	}
 	
 	public void rollback() {
-		this.transactionThreadsMap.values().stream().parallel().forEach(
+		//log.debug("-------------总事务rollback---------------");
+		this.transactionThreadsMap.values().parallelStream().forEach(
 			asyncTransactionThread -> {
 			if (asyncTransactionThread.isAlive()) {
 				asyncTransactionThread.offer( () -> {return StringMeanPool.ROLLBACK;} );
@@ -148,10 +149,9 @@ public class TotalTransactionManager {
 	 * @param <T>
 	 * @param function 入参固定为循环遍历分支dataSrouceBeanName,返回为对应的线程操作类的结果.
 	 */
-	public Object execute(Function<String,Object> function) {
+	public String execute(Function<String,Object> function) {
 		//总事务管理检测各个支线事务是否有异常,有就回滚
-		if(this.checkBranchError().length() == 0) {
-			
+		if(this.errorMessage.length() == 0) {
 			Map<String, String> map1 = new ConcurrentHashMap<String, String>();
 			this.transactionThreadsMap.forEach((dataSourceBeanName,asyncTransactionThread) -> {
 				map1.put(dataSourceBeanName, dataSourceBeanName);
@@ -162,8 +162,7 @@ public class TotalTransactionManager {
 			});
 			Set<String> executeTransactionDataSourceBeanNames = map1.keySet();
 			
-			
-			this.transactionThreadsMap.entrySet().stream().parallel().forEach(
+			this.transactionThreadsMap.entrySet().parallelStream().forEach(
 				entrySet -> {
 					String dataSourceBeanName = entrySet.getKey();
 					AsyncTransactionThread asyncTransactionThread = entrySet.getValue();
@@ -179,26 +178,10 @@ public class TotalTransactionManager {
 				}
 			);
 			
-			//阻塞等待事务完成
-			while(executeTransactionDataSourceBeanNames.size() > 0) {
-				//TODO 超时  //？？强制中断
-				
-				try {
-					Thread.sleep(0);
-				} catch (InterruptedException e) {
-				}
-				
-				if(this.checkBranchError().length() > 0) {
-					//log.debug("有异常线程直接退出监测");
-					break;
-				}
-				
-				this.checkBranchInfo(executeTransactionDataSourceBeanNames);//检查分支事务完成情况，完成的移除
-			
-			}
+			this.checkBranchInfo(executeTransactionDataSourceBeanNames);//检查分支事务完成情况，完成的移除
 			//log.debug("执行完成executeTransactionDataSourceBeanNames完成了的情况：" + executeTransactionDataSourceBeanNames.size());
 			//log.debug("执行完成transactionThreadsMap的情况：" + this.transactionThreadsMap.size());
-			if (this.checkBranchError().length() != 0) {
+			if (this.errorMessage.length() > 0) {
 				this.rollback();
 				return this.errorMessage.toString();
 			} else {
@@ -220,12 +203,21 @@ public class TotalTransactionManager {
 	 * @param executeTransactionDataSourceBeanNames
 	 */
 	private void checkBranchInfo(Set<String> executeTransactionDataSourceBeanNames) {
-		executeTransactionDataSourceBeanNames.stream().parallel().forEach(
+		executeTransactionDataSourceBeanNames.parallelStream().forEach(
 			dataSourceBeanName -> {
-				Object info = this.transactionThreadsMap.get(dataSourceBeanName).getInfoMessage();
-				if (!StringPool.BLANK.equals(info)) {
-					executeTransactionDataSourceBeanNames.remove(dataSourceBeanName);
+				//log.debug(dataSourceBeanName + "-------------checkBranchInfo---------------");
+				AsyncTransactionThread asyncTransactionThread = this.transactionThreadsMap.get(dataSourceBeanName);
+				while(StringPool.BLANK.equals(asyncTransactionThread.getInfoMessage())) {
+					Thread.yield();
+					if( asyncTransactionThread.getErrorMessage().length() > 0 ) {
+						if (this.errorMessage.indexOf(asyncTransactionThread.getErrorMessage()) == -1) {//相同错误消息合并
+							this.errorMessage.append(asyncTransactionThread.getErrorMessage());
+						}
+						log.debug("-------------有了errorMessage---------------");
+						break;
+					}
 				}
+				executeTransactionDataSourceBeanNames.remove(dataSourceBeanName);
 			}	
 		);
 	}
@@ -233,18 +225,18 @@ public class TotalTransactionManager {
 	/**
 	 * 总事务管理检测正在执行任务的各个支线事务是否有异常,
 	 * 以便发现异常进行全部回滚
-	 * @return 异常消息
 	 */
 	public StringBuffer checkBranchError() {
 		if (this.errorMessage.length() == 0) {
-			this.transactionThreadsMap.entrySet().stream().parallel().forEach(
+			this.transactionThreadsMap.entrySet().parallelStream().forEach(
 					entrySet -> {
-					String dataSourceBeanName = entrySet.getKey();
+					//String dataSourceBeanName = entrySet.getKey();
 					AsyncTransactionThread asyncTransactionThread = entrySet.getValue();
-					if(!asyncTransactionThread.getErrorMessage().equals(StringPool.BLANK)) {
-						StringBuilder threadErrorMessage = new StringBuilder();
-						threadErrorMessage.append(dataSourceBeanName).append(StringPool.COLON).append(asyncTransactionThread.getErrorMessage());
-						this.errorMessage.append(threadErrorMessage);
+					//log.debug("-------------checkBranchError---------------");
+					if(!StringPool.BLANK.equals(asyncTransactionThread.getErrorMessage())) {
+						if (this.errorMessage.indexOf(asyncTransactionThread.getErrorMessage()) == -1) {//相同错误消息合并
+							this.errorMessage.append(asyncTransactionThread.getErrorMessage());
+						}
 					}	
 				}	
 			);	
