@@ -4,7 +4,7 @@ import java.util.Map;
 import org.dom4j.DocumentException;
 import org.junit.jupiter.api.Test;
 
-import com.alibaba.fastjson.JSON;
+import com.alibaba.fastjson2.JSON;
 import com.wondersgourp.test.xml.City;
 import com.wondersgourp.test.xml.CityList;
 import com.wondersgroup.commonutil.xml.XmlBeanUtils;

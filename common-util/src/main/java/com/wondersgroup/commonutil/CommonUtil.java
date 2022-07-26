@@ -4,9 +4,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.alibaba.fastjson.JSON;
-import com.alibaba.fastjson.serializer.SerializerFeature;
-import com.alibaba.fastjson.util.TypeUtils;
+import com.alibaba.fastjson2.JSON;
+import com.alibaba.fastjson2.JSONWriter.Feature;
 
 /**
  * 基本工具类
@@ -19,8 +18,7 @@ public class CommonUtil {
 	 * 调用此方法等同全局配置
 	 */
 	public static String toJSONString(Object obj){
-		TypeUtils.compatibleWithFieldName =true;
-		return JSON.toJSONString(obj,SerializerFeature.WriteMapNullValue,SerializerFeature.WriteNullStringAsEmpty,SerializerFeature.WriteDateUseDateFormat);
+		return JSON.toJSONString(obj,"yyyy-MM-dd HH:mm:ss",Feature.WriteMapNullValue,Feature.WriteNulls);
 	}
 	
 	/**
