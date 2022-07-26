@@ -7,13 +7,14 @@ import org.springframework.data.redis.connection.RedisConnectionFactory;
 import org.springframework.data.redis.core.RedisTemplate;
 import org.springframework.data.redis.serializer.RedisSerializer;
 
-import com.wondersgroup.common.spring.redis.util.MyFastJsonRedisSerializer;
+import com.alibaba.fastjson2.support.spring.data.redis.FastJsonRedisSerializer;
 
 
 public class CommonRedisTemplate extends RedisTemplate<String, Object> {
 	
 	//private static GenericFastJsonRedisSerializer genericFastJsonRedisSerializer = new GenericFastJsonRedisSerializer();
-	private static MyFastJsonRedisSerializer myFastJsonRedisSerializer = new MyFastJsonRedisSerializer();
+	private static FastJsonRedisSerializer<Object> fastJsonRedisSerializer = new FastJsonRedisSerializer<Object>(Object.class);
+	//private static MyFastJsonRedisSerializer myFastJsonRedisSerializer = new MyFastJsonRedisSerializer();
 	
 	/**
 	 * Constructs a new <code>StringRedisTemplate</code> instance. {@link #setConnectionFactory(RedisConnectionFactory)}
@@ -21,9 +22,11 @@ public class CommonRedisTemplate extends RedisTemplate<String, Object> {
 	 */
 	public CommonRedisTemplate() {
 		setKeySerializer(RedisSerializer.string());
-		setValueSerializer(myFastJsonRedisSerializer);
+		//setValueSerializer(myFastJsonRedisSerializer);
+		setValueSerializer(fastJsonRedisSerializer);
 		setHashKeySerializer(RedisSerializer.string());
-        setHashValueSerializer(myFastJsonRedisSerializer);
+        //setHashValueSerializer(myFastJsonRedisSerializer);
+        setHashValueSerializer(fastJsonRedisSerializer);
 	}
 
 	/**
